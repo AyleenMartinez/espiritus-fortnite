@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Colección de Espíritus de Fortnite - Checklist interactivo">
+    <meta name="theme-color" content="#7c3aed">
+
+    <title>Colección de Espíritus Fortnite</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="contenedor-principal">
+
+        <!-- ============ ENCABEZADO ============ -->
+        <header class="encabezado">
+            <h1 class="titulo-principal">🎮 Colección de Espíritus Fortnite</h1>
+        </header>
+
+        <!-- ============ ESTADÍSTICAS ============ -->
+        <section class="seccion-estadisticas">
+            <div class="tarjeta-estadistica">
+                <div class="label-estadistica">Conseguidos</div>
+                <div class="valor-estadistica" id="conseguidos-total">0</div>
+            </div>
+
+            <div class="tarjeta-estadistica">
+                <div class="label-estadistica">Total</div>
+                <div class="valor-estadistica" id="total-espiritus">0</div>
+            </div>
+
+            <div class="tarjeta-estadistica">
+                <div class="label-estadistica">Progreso</div>
+                <div class="valor-estadistica" id="porcentaje-valor">0%</div>
+            </div>
+
+            <div class="tarjeta-estadistica">
+                <div class="label-estadistica">Faltantes</div>
+                <div class="valor-estadistica" id="faltantes-total">0</div>
+            </div>
+
+        </section>
+
+        <!-- ============ BARRA DE PROGRESO ============ -->
+        <div class="contenedor-progreso">
+            <div class="label-progreso">
+                <span>Progreso Total (Colección Actual)</span>
+                <span id="porcentaje-completado-barra">0%</span>
+            </div>
+            <div class="fondo-barra">
+                <div class="barra-progreso" id="barra-progreso"></div>
+            </div>
+        </div>
+
+        <!-- ============ CONTROLES ============ -->
+        <div class="seccion-controles">
+            <!-- Fila 1: Buscador y Acciones -->
+            <div class="fila-superior">
+                <div class="contenedor-buscador">
+                    <input type="text" id="buscador" class="buscador" placeholder="🔍 Buscar espíritu...">
+                </div>
+
+                <div class="grupo-acciones">
+                    <button id="boton-reiniciar" class="boton-accion">🔄 Reiniciar</button>
+                </div>
+            </div>
+
+
+            <!-- Fila 2: Filtros -->
+            <div class="fila-filtros" id="grupo-filtros">
+                <!-- Se generan dinámicamente con JavaScript -->
+            </div>
+
+
+        </div>
+
+        <!-- ============ CONTENEDOR DE ESPÍRITUS ============ -->
+        <div id="contenedor-tarjetas">
+            <!-- Se generan dinámicamente por bloque de espíritu -->
+        </div>
+
+    </div>
+
+    <!-- ============ SCRIPTS ============ -->
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
