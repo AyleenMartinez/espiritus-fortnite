@@ -760,6 +760,83 @@ body {
   text-align: right;
 }
 
+/* ============ BOTÓN DOMINADO ============ */
+
+.acciones-variante {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.boton-dominado {
+  width: 100%;
+  min-height: 30px;
+  padding: 6px 10px;
+  border: 1px solid rgba(245, 158, 11, 0.55);
+  border-radius: 8px;
+  background: rgba(245, 158, 11, 0.12);
+  color: #fcd34d;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.boton-dominado:hover {
+  background: rgba(245, 158, 11, 0.22);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+}
+
+.boton-dominado.activo {
+  background: linear-gradient(135deg, #facc15, #f59e0b);
+  color: #1f1600;
+  border-color: #fde68a;
+}
+
+.tarjeta-variante.dominado {
+  border-color: #facc15;
+  box-shadow:
+    inset 0 0 12px rgba(245, 158, 11, 0.18),
+    0 0 18px rgba(245, 158, 11, 0.20);
+}
+
+.insignia-dominado {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #facc15, #f59e0b);
+  color: #1f1600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
+}
+
+@media (max-width: 760px) {
+  .acciones-variante {
+    gap: 10px;
+  }
+
+  .boton-dominado {
+    min-height: 38px;
+    font-size: 0.95rem;
+    border-radius: 10px;
+  }
+
+  .insignia-dominado {
+    width: 36px;
+    height: 36px;
+    font-size: 1.15rem;
+  }
+}
+
 /* PC: filtros visibles normales */
 @media (min-width: 761px) {
   .boton-menu-filtros {
