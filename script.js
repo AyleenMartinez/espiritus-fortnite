@@ -208,35 +208,61 @@ function actualizarEstadisticas() {
 
 // ============ FILTROS ============
 function generarFiltrosConContadores() {
-    const grupoFiltros = document.getElementById('grupo-filtros');
-    grupoFiltros.innerHTML = '';
+  const grupoFiltros = document.getElementById('grupo-filtros');
+  const filtroActualTexto = document.getElementById('filtro-actual-texto');
+  const botonMenuFiltros = document.getElementById('boton-menu-filtros');
 
-    const filtros = [
-        { id: 'coleccion-actual', emoji: '📊', label: 'Colección Actual' },
-        { id: 'conseguidos', emoji: '✓', label: 'Conseguidos' },
-        { id: 'faltantes', emoji: '✗', label: 'Faltantes' },
-        { id: 'base', emoji: '🟣', label: 'Base' },
-        { id: 'gold', emoji: '⭐', label: 'Gold' },
-        { id: 'gummy', emoji: '🍬', label: 'Gummy' },
-        { id: 'galaxy', emoji: '✨', label: 'Galaxy' },
-        { id: 'proximamente', emoji: '🔒', label: 'Próximamente' }
-    ];
+  if (!grupoFiltros) return;
 
-    filtros.forEach(filtro => {
-        const boton = document.createElement('button');
-        boton.className = 'boton-filtro';
-        if (filtro.id === filtroActual) boton.classList.add('activo');
+  grupoFiltros.innerHTML = '';
 
-        boton.textContent = `${filtro.emoji} ${filtro.label} (${contarPorFiltro(filtro.id)})`;
+  const filtros = [
+    { id: 'coleccion-actual', emoji: '📊', label: 'Colección Actual' },
+    { id: 'conseguidos', emoji: '✓', label: 'Conseguidos' },
+    { id: 'faltantes', emoji: '✗', label: 'Faltantes' },
+    { id: 'base', emoji: '🟣', label: 'Base' },
+    { id: 'gold', emoji: '⭐', label: 'Gold' },
+    { id: 'gummy', emoji: '🍬', label: 'Gummy' },
+    { id: 'galaxy', emoji: '✨', label: 'Galaxy' },
+    { id: 'proximamente', emoji: '🔒', label: 'Próximamente' }
+  ];
 
-        boton.addEventListener('click', () => {
-            filtroActual = filtro.id;
-            generarFiltrosConContadores();
-            aplicarFiltro();
-        });
+  filtros.forEach(filtro => {
+    const count = contarPorFiltro(filtro.id);
 
-        grupoFiltros.appendChild(boton);
+    const boton = document.createElement('button');
+    boton.className = 'boton-filtro';
+    boton.type = 'button';
+    boton.textContent = `${filtro.emoji} ${filtro.label} (${count})`;
+
+    if (filtro.id === filtroActual) {
+      boton.classList.add('activo');
+
+      if (filtroActualTexto) {
+        filtroActualTexto.textContent = `${filtro.label} (${count})`;
+      }
+    }
+
+    boton.addEventListener('click', () => {
+      filtroActual = filtro.id;
+
+      if (filtroActualTexto) {
+        filtroActualTexto.textContent = `${filtro.label} (${contarPorFiltro(filtro.id)})`;
+      }
+
+      generarFiltrosConContadores();
+      aplicarFiltro();
+
+      // En celular, cerrar menú después de elegir filtro
+      grupoFiltros.classList.remove('abierto');
+
+      if (botonMenuFiltros) {
+        botonMenuFiltros.classList.remove('activo');
+      }
     });
+
+    grupoFiltros.appendChild(boton);
+  });
 }
 
 // ============ RENDER ============
@@ -281,6 +307,7 @@ function crearBloqueEspiritu(espiritu, esProximamente = false) {
     const rareza = obtenerRarezaBase(espiritu);
 
     const header = document.createElement('header');
+    header.className = 'bloque-header';
     header.innerHTML = `
   <div class="bloque-titulo-linea">
     <div>
@@ -458,29 +485,46 @@ function actualizarPagina() {
 }
 
 function configurarEventListeners() {
-    document.getElementById('buscador').addEventListener('input', function () {
-        busquedaActual = normalizarTexto(this.value);
-        aplicarFiltro();
+  const buscador = document.getElementById('buscador');
+  const botonReiniciar = document.getElementById('boton-reiniciar');
+  const botonMenuFiltros = document.getElementById('boton-menu-filtros');
+  const grupoFiltros = document.getElementById('grupo-filtros');
+  const botonSubir = document.getElementById('boton-subir');
+
+  if (buscador) {
+    buscador.addEventListener('input', function () {
+      busquedaActual = normalizarTexto(this.value);
+      aplicarFiltro();
     });
+  }
 
-    document.getElementById('boton-reiniciar').addEventListener('click', reiniciarColeccion);
+  if (botonReiniciar) {
+    botonReiniciar.addEventListener('click', reiniciarColeccion);
+  }
 
-    const botonSubir = document.getElementById('boton-subir');
+  if (botonMenuFiltros && grupoFiltros) {
+    botonMenuFiltros.addEventListener('click', function () {
+      grupoFiltros.classList.toggle('abierto');
+      botonMenuFiltros.classList.toggle('activo');
+    });
+  }
 
+  if (botonSubir) {
     window.addEventListener('scroll', function () {
-        if (window.scrollY > 400) {
-            botonSubir.classList.add('visible');
-        } else {
-            botonSubir.classList.remove('visible');
-        }
+      if (window.scrollY > 400) {
+        botonSubir.classList.add('visible');
+      } else {
+        botonSubir.classList.remove('visible');
+      }
     });
 
     botonSubir.addEventListener('click', function () {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     });
+  }
 }
 
 window.addEventListener('DOMContentLoaded', function () {

@@ -723,6 +723,83 @@ body {
   transform: translateY(-3px);
 }
 
+/* ============ MENÚ HAMBURGUESA DE FILTROS EN CELULAR ============ */
+
+.contenedor-menu-filtros {
+  width: 100%;
+}
+
+.boton-menu-filtros {
+  display: none;
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 16px;
+  border: 1px solid var(--morado);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.45), rgba(236, 72, 153, 0.20));
+  color: var(--texto);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 0 16px rgba(124, 58, 237, 0.18);
+}
+
+.boton-menu-filtros.activo {
+  border-color: var(--rosa);
+  box-shadow: 0 0 18px rgba(236, 72, 153, 0.28);
+}
+
+#filtro-actual-texto {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--texto-suave);
+  text-align: right;
+}
+
+/* PC: filtros visibles normales */
+@media (min-width: 761px) {
+  .boton-menu-filtros {
+    display: none !important;
+  }
+
+  .fila-filtros {
+    display: flex !important;
+  }
+}
+
+/* CELULAR: filtros escondidos */
+@media (max-width: 760px) {
+  .boton-menu-filtros {
+    display: flex !important;
+  }
+
+  .fila-filtros {
+    display: none !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    margin-top: 10px !important;
+    padding: 10px !important;
+    border: 1px solid var(--borde) !important;
+    border-radius: 12px !important;
+    background: rgba(8, 13, 28, 0.82) !important;
+  }
+
+  .fila-filtros.abierto {
+    display: grid !important;
+  }
+
+  .boton-filtro {
+    width: 100% !important;
+    min-height: 46px !important;
+    text-align: center !important;
+    font-size: 0.95rem !important;
+  }
+}
+
 @media (max-width: 760px) {
   .boton-subir {
     right: 16px;
@@ -730,6 +807,74 @@ body {
     width: 48px;
     height: 48px;
     font-size: 1.6rem;
+  }
+}
+
+/* ============ MENÚ DE FILTROS RESPONSIVE ============ */
+
+.contenedor-menu-filtros {
+  width: 100%;
+}
+
+.boton-menu-filtros {
+  display: none;
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 16px;
+  border: 1px solid var(--morado);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.45), rgba(236, 72, 153, 0.20));
+  color: var(--texto);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 0 16px rgba(124, 58, 237, 0.18);
+}
+
+#filtro-actual-texto {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--texto-suave);
+  text-align: right;
+}
+
+/* Desktop: filtros normales */
+@media (min-width: 761px) {
+  .fila-filtros {
+    display: flex;
+  }
+}
+
+/* Celular: filtros escondidos en menú */
+@media (max-width: 760px) {
+  .boton-menu-filtros {
+    display: flex;
+  }
+
+  .fila-filtros {
+    display: none;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    background: rgba(8, 13, 28, 0.72);
+  }
+
+  .fila-filtros.abierto {
+    display: grid;
+  }
+
+  .boton-filtro {
+    width: 100%;
+    justify-content: center;
+    min-height: 46px;
+    font-size: 0.95rem;
   }
 }
 
