@@ -92,7 +92,7 @@ const espiritusData = [
 
   {
     id: "pato",
-    nombreES: "Espíritu Pato",
+    nombreES: "Espíritu Patito",
     nombreEN: "Duck Sprite",
     coleccion: "actual",
     permiteVariantes: true,
@@ -124,7 +124,7 @@ const espiritusData = [
 
   {
     id: "demonio",
-    nombreES: "Espíritu Demonio",
+    nombreES: "Espíritu Demoniaco",
     nombreEN: "Demon Sprite",
     coleccion: "actual",
     permiteVariantes: true,
@@ -140,7 +140,7 @@ const espiritusData = [
 
   {
     id: "rey",
-    nombreES: "Espíritu Rey",
+    nombreES: "Espíritu Monarca",
     nombreEN: "King Sprite",
     coleccion: "actual",
     permiteVariantes: true,
@@ -220,7 +220,7 @@ const espiritusData = [
 
   {
     id: "pez",
-    nombreES: "Espíritu Pez",
+    nombreES: "Espíritu Palito de Pez",
     nombreEN: "Fishy Sprite",
     coleccion: "actual",
     permiteVariantes: true,
@@ -284,7 +284,7 @@ const espiritusData = [
 
   {
     id: "mani-quemado",
-    nombreES: "Espíritu Maní Quemado",
+    nombreES: "Espíritu Burnt Peanut",
     nombreEN: "Burnt Peanut Sprite",
     coleccion: "actual",
     permiteVariantes: false,

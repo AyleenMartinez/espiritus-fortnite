@@ -4,6 +4,7 @@
 // ============================================================
 
 let spiritsCollected = {};
+let spiritsDominated = {};
 let filtroActual = 'coleccion-actual';
 let busquedaActual = '';
 
