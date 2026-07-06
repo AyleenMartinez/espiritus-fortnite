@@ -1,18 +1,23 @@
-// ============ ESTADO GLOBAL ============
+// ============================================================
+// SCRIPT.JS - Checklist de Espíritus Fortnite
+// Vista compacta tipo colección, con filtros y progreso local.
+// ============================================================
+
 let spiritsCollected = {};
 let filtroActual = 'coleccion-actual';
 let busquedaActual = '';
-let ordenActual = 'original';
 
-// Cargar datos guardados al iniciar
+// ============ LOCALSTORAGE ============
 function cargarProgreso() {
     const guardado = localStorage.getItem('spiritsProgress');
-    if (guardado) {
-        try {
-            spiritsCollected = JSON.parse(guardado);
-        } catch (e) {
-            console.error('Error al cargar progreso:', e);
-        }
+
+    if (!guardado) return;
+
+    try {
+        spiritsCollected = JSON.parse(guardado);
+    } catch (error) {
+        console.error('Error al cargar progreso:', error);
+        spiritsCollected = {};
     }
 }
 
@@ -21,27 +26,121 @@ function guardarProgreso() {
     actualizarPagina();
 }
 
-// ============ CÁLCULOS ============
+// ============ HELPERS ============
+function esVarianteActual(variante) {
+    return variante.coleccion === 'actual' && variante.estado === 'activo';
+}
+
+function claveEspiritu(espiritu, variante) {
+    return `${espiritu.id}-${variante.id}`;
+}
+
+function normalizarTexto(texto) {
+    return String(texto || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim();
+}
+
+function normalizarClase(texto) {
+    return normalizarTexto(texto).replace(/\s+/g, '-');
+}
+
+function obtenerNombreCorto(espiritu) {
+    return espiritu.nombreES
+        .replace('Espíritu del ', '')
+        .replace('Espíritu de ', '')
+        .replace('Espíritu ', '')
+        .trim();
+}
+
+function obtenerTituloTarjeta(espiritu, variante) {
+    const nombreCorto = obtenerNombreCorto(espiritu);
+
+    if (variante.id === 'base') return nombreCorto;
+    return `${variante.nombre} ${nombreCorto}`;
+}
+
+function obtenerPlaceholderVariante(varianteId) {
+    const placeholders = {
+        base: '●',
+        gold: '★',
+        gummy: '🍬',
+        galaxy: '✦'
+    };
+
+    return placeholders[varianteId] || '?';
+}
+
+function obtenerRarezaBase(espiritu) {
+    if (espiritu.rarezaBase) return espiritu.rarezaBase;
+
+    const rarezas = {
+        agua: 'Raro',
+        tierra: 'Raro',
+        fuego: 'Raro',
+        pato: 'Épico',
+        fantasma: 'Épico',
+        demonio: 'Épico',
+        rey: 'Épico',
+        punk: 'Legendario',
+        onirico: 'Legendario',
+        'punto-cero': 'Mítico',
+        'mani-quemado': 'Mítico'
+    };
+
+    return rarezas[espiritu.id] || 'Por confirmar';
+}
+
+function obtenerRarezaVariante(espiritu, variante) {
+    if (variante.rareza) return variante.rareza;
+    if (variante.id !== 'base') return 'Especial';
+    return obtenerRarezaBase(espiritu);
+}
+
+function obtenerTextoBuscable(espiritu, variante) {
+    return normalizarTexto([
+        espiritu.id,
+        espiritu.nombreES,
+        espiritu.nombreEN,
+        espiritu.habilidad,
+        espiritu.ubicacion,
+        espiritu.costoInvocacion,
+        variante.id,
+        variante.nombre,
+        variante.bonus,
+        obtenerTituloTarjeta(espiritu, variante),
+        obtenerRarezaVariante(espiritu, variante)
+    ].join(' '));
+}
+
+// ============ ESTADÍSTICAS ============
 function calcularEstadisticas() {
     let conseguidos = 0;
     let total = 0;
-    let variantesConseguidas = { base: 0, gold: 0, gummy: 0, galaxy: 0 };
-    let variantesTotales = { base: 0, gold: 0, gummy: 0, galaxy: 0 };
+
+    const variantesConseguidas = {
+        base: 0,
+        gold: 0,
+        gummy: 0,
+        galaxy: 0
+    };
 
     espiritusData.forEach(espiritu => {
         if (espiritu.coleccion !== 'actual') return;
 
         espiritu.variantes.forEach(variante => {
-            if (variante.coleccion !== 'actual') return;
+            if (!esVarianteActual(variante)) return;
 
-            const tipoVariante = variante.id;
             total++;
-            variantesTotales[tipoVariante]++;
 
-            const claveUnica = espiritu.id + '-' + variante.id;
-            if (spiritsCollected[claveUnica]) {
+            const clave = claveEspiritu(espiritu, variante);
+            if (spiritsCollected[clave]) {
                 conseguidos++;
-                variantesConseguidas[tipoVariante]++;
+                if (variantesConseguidas[variante.id] !== undefined) {
+                    variantesConseguidas[variante.id]++;
+                }
             }
         });
     });
@@ -51,10 +150,9 @@ function calcularEstadisticas() {
     return {
         conseguidos,
         total,
-        porcentaje,
         faltantes: total - conseguidos,
-        variantesConseguidas,
-        variantesTotales
+        porcentaje,
+        variantesConseguidas
     };
 }
 
@@ -63,63 +161,52 @@ function contarPorFiltro(filtro) {
 
     espiritusData.forEach(espiritu => {
         espiritu.variantes.forEach(variante => {
-            // Solo contar variantes que pertenecen a colección actual
-            if (variante.coleccion !== 'actual') return;
+            const clave = claveEspiritu(espiritu, variante);
+            const esProximamente = variante.coleccion === 'proximamente' || espiritu.coleccion === 'proximamente';
+            const esActual = espiritu.coleccion === 'actual' && esVarianteActual(variante);
 
-            if (filtro === 'coleccion-actual') {
-                count++;
-            } else if (filtro === 'proximamente') {
+            if (filtro === 'proximamente') {
+                if (esProximamente) count++;
                 return;
-            } else {
-                const claveUnica = espiritu.id + '-' + variante.id;
-
-                if (filtro === 'conseguidos' && spiritsCollected[claveUnica]) count++;
-                else if (filtro === 'faltantes' && !spiritsCollected[claveUnica]) count++;
-                else if (filtro === 'base' && variante.id === 'base') count++;
-                else if (filtro === 'gold' && variante.id === 'gold') count++;
-                else if (filtro === 'gummy' && variante.id === 'gummy') count++;
-                else if (filtro === 'galaxy' && variante.id === 'galaxy') count++;
             }
+
+            if (!esActual) return;
+
+            if (filtro === 'coleccion-actual') count++;
+            else if (filtro === 'conseguidos' && spiritsCollected[clave]) count++;
+            else if (filtro === 'faltantes' && !spiritsCollected[clave]) count++;
+            else if (filtro === variante.id) count++;
         });
     });
-
-    // Contar próximamente solo si es el filtro
-    if (filtro === 'proximamente') {
-        espiritusData.forEach(espiritu => {
-            espiritu.variantes.forEach(variante => {
-                if (variante.coleccion === 'proximamente') count++;
-            });
-        });
-    }
 
     return count;
 }
 
-// ============ ACTUALIZAR ESTADÍSTICAS ============
 function actualizarEstadisticas() {
     const stats = calcularEstadisticas();
 
     document.getElementById('conseguidos-total').textContent = stats.conseguidos;
     document.getElementById('total-espiritus').textContent = stats.total;
+    document.getElementById('faltantes-total').textContent = stats.faltantes;
+
     document.getElementById('porcentaje-valor').textContent =
         stats.total > 0 && stats.conseguidos === stats.total
             ? 'Completado'
-            : stats.porcentaje + '%';
-    document.getElementById('faltantes-total').textContent = stats.faltantes;
+            : `${stats.porcentaje}%`;
 
+    document.getElementById('porcentaje-completado-barra').textContent = `${stats.porcentaje}%`;
 
-    document.getElementById('porcentaje-completado-barra').textContent = stats.porcentaje + '%';
+    const barra = document.getElementById('barra-progreso');
+    barra.style.width = `${stats.porcentaje}%`;
+    barra.className = 'barra-progreso';
 
-    const barraProgreso = document.getElementById('barra-progreso');
-    barraProgreso.style.width = stats.porcentaje + '%';
-    barraProgreso.className = 'barra-progreso';
-    if (stats.porcentaje < 25) barraProgreso.classList.add('rojo');
-    else if (stats.porcentaje < 50) barraProgreso.classList.add('naranja');
-    else if (stats.porcentaje < 75) barraProgreso.classList.add('amarillo');
-    else barraProgreso.classList.add('verde');
+    if (stats.porcentaje < 25) barra.classList.add('rojo');
+    else if (stats.porcentaje < 50) barra.classList.add('naranja');
+    else if (stats.porcentaje < 75) barra.classList.add('amarillo');
+    else barra.classList.add('verde');
 }
 
-// ============ GENERAR FILTROS ============
+// ============ FILTROS ============
 function generarFiltrosConContadores() {
     const grupoFiltros = document.getElementById('grupo-filtros');
     grupoFiltros.innerHTML = '';
@@ -136,77 +223,42 @@ function generarFiltrosConContadores() {
     ];
 
     filtros.forEach(filtro => {
-        const count = contarPorFiltro(filtro.id);
         const boton = document.createElement('button');
         boton.className = 'boton-filtro';
         if (filtro.id === filtroActual) boton.classList.add('activo');
-        boton.textContent = filtro.emoji + ' ' + filtro.label + ' (' + count + ')';
+
+        boton.textContent = `${filtro.emoji} ${filtro.label} (${contarPorFiltro(filtro.id)})`;
+
         boton.addEventListener('click', () => {
-            document.querySelectorAll('.boton-filtro').forEach(b => b.classList.remove('activo'));
-            boton.classList.add('activo');
             filtroActual = filtro.id;
+            generarFiltrosConContadores();
             aplicarFiltro();
         });
+
         grupoFiltros.appendChild(boton);
     });
 }
 
-// ============ GENERAR ORDEN ============
-function generarOrdenes() {
-    const select = document.getElementById('orden-espiritus');
-    select.innerHTML = '';
-
-    const opciones = [
-        { value: 'original', label: 'Orden original' },
-        { value: 'a-z', label: 'A-Z' },
-        { value: 'costo-menor', label: 'Costo menor' },
-        { value: 'costo-mayor', label: 'Costo mayor' },
-        { value: 'conseguido-primero', label: 'Conseguido primero' },
-        { value: 'faltante-primero', label: 'Faltante primero' }
-    ];
-
-    opciones.forEach(opcion => {
-        const opt = document.createElement('option');
-        opt.value = opcion.value;
-        opt.textContent = opcion.label;
-        select.appendChild(opt);
-    });
-
-    select.addEventListener('change', (e) => {
-        ordenActual = e.target.value;
-        generarTarjetas();
-    });
-}
-
-// ============ GENERAR TARJETAS ============
+// ============ RENDER ============
 function generarTarjetas() {
     const contenedor = document.getElementById('contenedor-tarjetas');
     contenedor.innerHTML = '';
 
-    let espiritusMostrados = espiritusData.filter(e => e.coleccion === 'actual');
+    const actuales = espiritusData.filter(espiritu => espiritu.coleccion === 'actual');
 
-    if (ordenActual === 'a-z') {
-        espiritusMostrados.sort((a, b) => a.nombreES.localeCompare(b.nombreES));
-    } else if (ordenActual === 'costo-menor') {
-        espiritusMostrados.sort((a, b) => a.costoInvocacion - b.costoInvocacion);
-    } else if (ordenActual === 'costo-mayor') {
-        espiritusMostrados.sort((a, b) => b.costoInvocacion - a.costoInvocacion);
-    }
-
-    espiritusMostrados.forEach(espiritu => {
-        const bloque = crearBloqueEspiritu(espiritu);
-        contenedor.appendChild(bloque);
+    actuales.forEach(espiritu => {
+        contenedor.appendChild(crearBloqueEspiritu(espiritu));
     });
 
-    const proximamente = espiritusData.filter(e => e.coleccion === 'proximamente');
+    const proximamente = espiritusData.filter(espiritu => espiritu.coleccion === 'proximamente');
+
     if (proximamente.length > 0) {
-        const seccionProx = document.createElement('div');
+        const seccionProx = document.createElement('section');
         seccionProx.className = 'seccion-proximamente';
-        seccionProx.innerHTML = '<h3>Próximamente / Por Confirmar</h3>';
+        seccionProx.innerHTML = '<h2 class="titulo-proximamente">🔒 Próximamente / Por confirmar</h2>';
 
         proximamente.forEach(espiritu => {
-            const bloque = crearBloqueEspiritu(espiritu, true);
-            seccionProx.appendChild(bloque);
+            seccionProx.appendChild(crearBloqueEspiritu(espiritu, true));
         });
 
         contenedor.appendChild(seccionProx);
@@ -214,127 +266,159 @@ function generarTarjetas() {
 }
 
 function crearBloqueEspiritu(espiritu, esProximamente = false) {
-    const bloque = document.createElement('div');
+    const bloque = document.createElement('section');
     bloque.className = 'bloque-espiritu';
+    bloque.dataset.nombre = normalizarTexto(`${espiritu.nombreES} ${espiritu.nombreEN}`);
 
-    const header = document.createElement('div');
-    header.className = 'bloque-header';
-    header.innerHTML = '<h3>' + espiritu.nombreES + '</h3><p>' + espiritu.habilidad + '</p>';
-    bloque.appendChild(header);
+    if (espiritu.permiteVariantes === false) {
+        bloque.classList.add('bloque-especial-unico');
+    }
+
+    if (esProximamente || espiritu.coleccion === 'proximamente') {
+        bloque.classList.add('bloqueado');
+    }
+
+    const rareza = obtenerRarezaBase(espiritu);
+
+    const header = document.createElement('header');
+    header.innerHTML = `
+  <div class="bloque-titulo-linea">
+    <div>
+      <h3>${espiritu.nombreES}</h3>
+      <p class="nombre-ingles">${espiritu.nombreEN || ''}</p>
+    </div>
+  </div>
+  <p class="habilidad-espiritu">${espiritu.habilidad || ''}</p>
+  <div class="meta-espiritu">
+    <span>📍 ${espiritu.ubicacion || 'Ubicación por confirmar'}</span>
+    ${espiritu.costoInvocacion ? `<span>💠 ${espiritu.costoInvocacion} polvo</span>` : ''}
+  </div>
+`;
 
     const contenedorVariantes = document.createElement('div');
     contenedorVariantes.className = 'contenedor-variantes';
 
-    if (!esProximamente) {
-        espiritu.variantes.forEach(variante => {
-            if (variante.coleccion === 'actual') {
-                const tarjeta = crearTarjetaVariante(espiritu, variante);
-                contenedorVariantes.appendChild(tarjeta);
-            }
-        });
-    } else {
-        espiritu.variantes.forEach(variante => {
-            if (variante.coleccion === 'proximamente') {
-                const tarjeta = crearTarjetaVarianteBloqueada(espiritu, variante);
-                contenedorVariantes.appendChild(tarjeta);
-            }
-        });
-    }
+    espiritu.variantes.forEach(variante => {
+        const esBloqueada = esProximamente || espiritu.coleccion === 'proximamente' || variante.coleccion === 'proximamente';
+        const tarjeta = esBloqueada
+            ? crearTarjetaVarianteBloqueada(espiritu, variante)
+            : crearTarjetaVariante(espiritu, variante);
 
+        contenedorVariantes.appendChild(tarjeta);
+    });
+
+    bloque.appendChild(header);
     bloque.appendChild(contenedorVariantes);
+
     return bloque;
 }
 
-function obtenerPlaceholderVariante(varianteId) {
-    const placeholders = {
-        base: '●',
-        gold: '★',
-        gummy: '🍬',
-        galaxy: '✦'
-    };
-
-    return placeholders[varianteId] || '?';
-}
-
 function crearTarjetaVariante(espiritu, variante) {
-    const tarjeta = document.createElement('div');
-    const claveUnica = espiritu.id + '-' + variante.id;
-    const esConseguida = spiritsCollected[claveUnica];
+    const tarjeta = document.createElement('article');
+    const clave = claveEspiritu(espiritu, variante);
+    const esConseguida = Boolean(spiritsCollected[clave]);
+    const rareza = obtenerRarezaVariante(espiritu, variante);
 
     tarjeta.className = 'tarjeta-variante';
+    tarjeta.id = clave;
+    tarjeta.dataset.search = obtenerTextoBuscable(espiritu, variante);
+    tarjeta.dataset.variante = variante.id;
+
     if (esConseguida) tarjeta.classList.add('conseguido');
-    tarjeta.id = claveUnica;
 
-    let html = '<div class="imagen-variante">';
-    html += '<img src="' + variante.imagen + '" alt="' + variante.nombre + '" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">';
-    html += '<div class="imagen-placeholder placeholder-' + variante.id + '">' + obtenerPlaceholderVariante(variante.id) + '</div>';
-    html += '</div>';
-    html += '<p class="nombre-variante">' + variante.nombre + '</p>';
-    if (variante.bonus) {
-        html += '<p class="bonus-variante">' + variante.bonus + '</p>';
-    }
-    html += '<button class="boton-variante">' + (esConseguida ? '✓ Conseguido' : 'Lo tengo') + '</button>';
+    tarjeta.innerHTML = `
+    <div class="imagen-variante">
+      <img src="${variante.imagen}" alt="${obtenerTituloTarjeta(espiritu, variante)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="imagen-placeholder placeholder-${variante.id}">${obtenerPlaceholderVariante(variante.id)}</div>
+    </div>
 
-    tarjeta.innerHTML = html;
-    tarjeta.addEventListener('click', () => toggleEspiritu(claveUnica));
+    <h4 class="titulo-card">${obtenerTituloTarjeta(espiritu, variante)}</h4>
+
+    <div class="badges-card">
+      <span class="etiqueta-rareza rareza-${normalizarClase(rareza)}">${rareza}</span>
+    </div>
+
+    <p class="bonus-variante">${variante.bonus || 'Sin bonus especial'}</p>
+
+    <button class="boton-variante" type="button">
+      ${esConseguida ? '✓ Conseguido' : 'Lo tengo'}
+    </button>
+  `;
+
+    tarjeta.addEventListener('click', () => toggleEspiritu(clave));
 
     return tarjeta;
 }
 
 function crearTarjetaVarianteBloqueada(espiritu, variante) {
-    const tarjeta = document.createElement('div');
+    const tarjeta = document.createElement('article');
+    const rareza = obtenerRarezaVariante(espiritu, variante);
+
     tarjeta.className = 'tarjeta-variante bloqueada';
+    tarjeta.id = claveEspiritu(espiritu, variante);
+    tarjeta.dataset.search = obtenerTextoBuscable(espiritu, variante);
+    tarjeta.dataset.variante = variante.id;
 
-    let html = '<div class="imagen-variante">';
-    html += '<div class="imagen-placeholder">🔒</div>';
-    html += '</div>';
-    html += '<p class="nombre-variante">' + variante.nombre + '</p>';
-    html += '<p class="estado-bloqueado">Próximamente</p>';
+    tarjeta.innerHTML = `
+    <div class="imagen-variante">
+      <img src="${variante.imagen || ''}" alt="${obtenerTituloTarjeta(espiritu, variante)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="imagen-placeholder placeholder-${variante.id}">🔒</div>
+    </div>
 
-    tarjeta.innerHTML = html;
+    <h4 class="titulo-card">${obtenerTituloTarjeta(espiritu, variante)}</h4>
+
+    <div class="badges-card">
+      <span class="etiqueta-rareza rareza-${normalizarClase(rareza)}">${rareza}</span>
+    </div>
+
+    <p class="bonus-variante">${variante.bonus || 'Por confirmar'}</p>
+    <span class="estado-bloqueado">Próximamente</span>
+  `;
+
     return tarjeta;
 }
 
-// ============ TOGGLE ESPÍRITU ============
-function toggleEspiritu(claveUnica) {
-    spiritsCollected[claveUnica] = !spiritsCollected[claveUnica];
+// ============ INTERACCIÓN ============
+function toggleEspiritu(clave) {
+    spiritsCollected[clave] = !spiritsCollected[clave];
     guardarProgreso();
 }
 
-// ============ APLICAR FILTRO ============
 function aplicarFiltro() {
-    const tarjetas = document.querySelectorAll('.tarjeta-variante');
-    let algunaVisible = false;
+    const bloques = document.querySelectorAll('.bloque-espiritu');
+    let hayResultados = false;
 
-    tarjetas.forEach(tarjeta => {
-        if (debeVerseVisible(tarjeta)) {
-            tarjeta.style.display = 'flex';
-            algunaVisible = true;
-        } else {
-            tarjeta.style.display = 'none';
-        }
+    bloques.forEach(bloque => {
+        const tarjetas = bloque.querySelectorAll('.tarjeta-variante');
+        let bloqueTieneVisible = false;
+
+        tarjetas.forEach(tarjeta => {
+            const visible = debeVerseVisible(tarjeta);
+            tarjeta.style.display = visible ? 'flex' : 'none';
+            if (visible) bloqueTieneVisible = true;
+        });
+
+        bloque.style.display = bloqueTieneVisible ? 'block' : 'none';
+        if (bloqueTieneVisible) hayResultados = true;
     });
 
-    mostrarMensajeVacio(!algunaVisible);
+    mostrarMensajeVacio(!hayResultados);
 }
 
 function debeVerseVisible(tarjeta) {
-    const esProxima = tarjeta.classList.contains('bloqueada');
+    const esBloqueada = tarjeta.classList.contains('bloqueada');
 
-    if (filtroActual === 'coleccion-actual' && esProxima) return false;
-    if (filtroActual === 'proximamente' && !esProxima) return false;
-
+    if (filtroActual === 'coleccion-actual' && esBloqueada) return false;
+    if (filtroActual === 'proximamente' && !esBloqueada) return false;
     if (filtroActual === 'conseguidos' && !tarjeta.classList.contains('conseguido')) return false;
-    if (filtroActual === 'faltantes' && tarjeta.classList.contains('conseguido')) return false;
+    if (filtroActual === 'faltantes' && (tarjeta.classList.contains('conseguido') || esBloqueada)) return false;
 
-    if (filtroActual === 'base' && !tarjeta.id.endsWith('-base')) return false;
-    if (filtroActual === 'gold' && !tarjeta.id.endsWith('-gold')) return false;
-    if (filtroActual === 'gummy' && !tarjeta.id.endsWith('-gummy')) return false;
-    if (filtroActual === 'galaxy' && !tarjeta.id.endsWith('-galaxy')) return false;
-
-    if (busquedaActual) {
-        if (!tarjeta.id.toLowerCase().includes(busquedaActual)) return false;
+    if (['base', 'gold', 'gummy', 'galaxy'].includes(filtroActual)) {
+        if (tarjeta.dataset.variante !== filtroActual) return false;
+        if (esBloqueada) return false;
     }
+
+    if (busquedaActual && !tarjeta.dataset.search.includes(busquedaActual)) return false;
 
     return true;
 }
@@ -343,16 +427,26 @@ function mostrarMensajeVacio(vacio) {
     const contenedor = document.getElementById('contenedor-tarjetas');
     let mensaje = contenedor.querySelector('.sin-resultados');
 
-    if (vacio) {
-        if (!mensaje) {
-            mensaje = document.createElement('div');
-            mensaje.className = 'sin-resultados';
-            mensaje.textContent = 'No se encontraron espíritus con este filtro';
-            contenedor.appendChild(mensaje);
-        }
-    } else {
-        if (mensaje) mensaje.remove();
+    if (vacio && !mensaje) {
+        mensaje = document.createElement('div');
+        mensaje.className = 'sin-resultados';
+        mensaje.textContent = 'No se encontraron espíritus con este filtro';
+        contenedor.appendChild(mensaje);
     }
+
+    if (!vacio && mensaje) {
+        mensaje.remove();
+    }
+}
+
+function reiniciarColeccion() {
+    const confirmar = confirm('¿Estás seguro? Se borrará toda la colección.\n\nEsta acción no se puede deshacer.');
+
+    if (!confirmar) return;
+
+    spiritsCollected = {};
+    guardarProgreso();
+    alert('✓ Colección reiniciada');
 }
 
 // ============ ACTUALIZAR PÁGINA ============
@@ -363,74 +457,15 @@ function actualizarPagina() {
     aplicarFiltro();
 }
 
-// ============ EVENTOS ============
 function configurarEventListeners() {
     document.getElementById('buscador').addEventListener('input', function () {
-        busquedaActual = this.value.toLowerCase();
+        busquedaActual = normalizarTexto(this.value);
         aplicarFiltro();
     });
 
     document.getElementById('boton-reiniciar').addEventListener('click', reiniciarColeccion);
 }
 
-// ============ EXPORTAR ============
-function exportarProgreso() {
-    const stats = calcularEstadisticas();
-    const fecha = new Date().toLocaleString();
-    const datos = {
-        fecha: fecha,
-        coleccion: 'actual',
-        espiritus: spiritsCollected,
-        resumen: {
-            conseguidos: stats.conseguidos,
-            total: stats.total,
-            porcentaje: stats.porcentaje,
-            faltantes: stats.faltantes
-        }
-    };
-
-    const json = JSON.stringify(datos, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    const fechaArchivo = new Date().toISOString().split('T')[0];
-    a.download = 'coleccion-espiritus-' + fechaArchivo + '.json';
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
-// ============ IMPORTAR ============
-function importarProgreso(event) {
-    const archivo = event.target.files[0];
-    if (!archivo) return;
-
-    const lector = new FileReader();
-    lector.onload = function (e) {
-        try {
-            const datos = JSON.parse(e.target.result);
-            if (datos.espiritus) {
-                spiritsCollected = datos.espiritus;
-                guardarProgreso();
-                alert('✓ Progreso importado correctamente');
-            }
-        } catch (error) {
-            alert('❌ Error al importar archivo: ' + error.message);
-        }
-    };
-    lector.readAsText(archivo);
-}
-
-// ============ REINICIAR ============
-function reiniciarColeccion() {
-    if (confirm('¿Estás seguro? Se borrará toda la colección.\n\n⚠️ Esta acción no se puede deshacer.')) {
-        spiritsCollected = {};
-        guardarProgreso();
-        alert('✓ Colección reiniciada');
-    }
-}
-
-// ============ INICIALIZAR ============
 window.addEventListener('DOMContentLoaded', function () {
     cargarProgreso();
     configurarEventListeners();
