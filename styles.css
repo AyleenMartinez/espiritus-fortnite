@@ -688,6 +688,51 @@ body {
   min-height: 270px;
 }
 
+/* ============ BOTÓN FLOTANTE SUBIR ============ */
+
+.boton-subir {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 999;
+  width: 52px;
+  height: 52px;
+  border: 2px solid rgba(168, 85, 247, 0.75);
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--morado), var(--rosa));
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(124, 58, 237, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(14px);
+  transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.boton-subir.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.boton-subir:hover {
+  box-shadow: 0 10px 26px rgba(236, 72, 153, 0.45);
+  transform: translateY(-3px);
+}
+
+@media (max-width: 760px) {
+  .boton-subir {
+    right: 16px;
+    bottom: 18px;
+    width: 48px;
+    height: 48px;
+    font-size: 1.6rem;
+  }
+}
+
 /* ============ RESPONSIVE ============ */
 @media (max-width: 1100px) {
   .contenedor-variantes {

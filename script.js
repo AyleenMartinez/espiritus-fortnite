@@ -464,6 +464,23 @@ function configurarEventListeners() {
     });
 
     document.getElementById('boton-reiniciar').addEventListener('click', reiniciarColeccion);
+
+    const botonSubir = document.getElementById('boton-subir');
+
+    window.addEventListener('scroll', function () {
+        if (window.scrollY > 400) {
+            botonSubir.classList.add('visible');
+        } else {
+            botonSubir.classList.remove('visible');
+        }
+    });
+
+    botonSubir.addEventListener('click', function () {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
 }
 
 window.addEventListener('DOMContentLoaded', function () {
