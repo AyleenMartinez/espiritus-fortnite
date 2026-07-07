@@ -61,14 +61,16 @@ function normalizarClase(texto) {
   return normalizarTexto(texto).replace(/\s+/g, '-');
 }
 
-function obtenerNombreCortoEN(espiritu) {
-  return (espiritu.nombreEN || '')
-    .replace(' Sprite', '')
-    .trim();
+function obtenerNombreCorto(espiritu) {
+    return espiritu.nombreES
+        .replace('Espíritu del ', '')
+        .replace('Espíritu de ', '')
+        .replace('Espíritu ', '')
+        .trim();
 }
 
 function obtenerTituloTarjeta(espiritu, variante) {
-  const nombreCorto = obtenerNombreCortoEN(espiritu);
+  const nombreCorto = obtenerNombreCorto(espiritu);
 
   if (variante.id === 'base') {
     return nombreCorto;
