@@ -55,31 +55,22 @@
         </div>
 
         <!-- ============ CONTROLES ============ -->
-        <div class="seccion-controles">
-            <!-- Fila 1: Buscador y Acciones -->
-            <div class="fila-superior">
-                <div class="contenedor-buscador">
-                    <input type="text" id="buscador" class="buscador" placeholder="🔍 Buscar espíritu...">
-                </div>
+        <div class="barra-controles">
 
-                <div class="grupo-acciones">
-                    <button id="boton-reiniciar" class="boton-accion">🔄 Reiniciar</button>
-                </div>
+            <div class="contenedor-buscador">
+                <input type="text" id="buscador" class="buscador" placeholder="🔍 Buscar espíritu...">
             </div>
 
-
-            <!-- Fila 2: Filtros -->
-            <div class="contenedor-menu-filtros">
-                <button id="boton-menu-filtros" class="boton-menu-filtros" type="button">
-                    <span>☰ Filtros</span>
-                    <span id="filtro-actual-texto">Colección Actual</span>
-                </button>
-
-                <div class="fila-filtros" id="grupo-filtros">
-                    <!-- Se generan dinámicamente con JavaScript -->
-                </div>
+            <div class="filtro-compacto">
+                <label for="select-filtros">Filtrar:</label>
+                <select id="select-filtros" class="select-filtros">
+                    <!-- Se genera con JavaScript -->
+                </select>
             </div>
 
+            <button id="boton-reiniciar" class="boton-accion">
+                🔄 Reiniciar
+            </button>
 
         </div>
 

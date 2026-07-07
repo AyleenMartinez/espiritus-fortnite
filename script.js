@@ -244,13 +244,9 @@ function actualizarEstadisticas() {
 
 // ============ FILTROS ============
 function generarFiltrosConContadores() {
-  const grupoFiltros = document.getElementById('grupo-filtros');
-  const filtroActualTexto = document.getElementById('filtro-actual-texto');
-  const botonMenuFiltros = document.getElementById('boton-menu-filtros');
+  const selectFiltros = document.getElementById('select-filtros');
 
-  if (!grupoFiltros) return;
-
-  grupoFiltros.innerHTML = '';
+  if (!selectFiltros) return;
 
   const filtros = [
     { id: 'coleccion-actual', emoji: '📊', label: 'Colección Actual' },
@@ -264,41 +260,27 @@ function generarFiltrosConContadores() {
     { id: 'proximamente', emoji: '🔒', label: 'Próximamente' }
   ];
 
+  selectFiltros.innerHTML = '';
+
   filtros.forEach(filtro => {
     const count = contarPorFiltro(filtro.id);
 
-    const boton = document.createElement('button');
-    boton.className = 'boton-filtro';
-    boton.type = 'button';
-    boton.textContent = `${filtro.emoji} ${filtro.label} (${count})`;
+    const opcion = document.createElement('option');
+    opcion.value = filtro.id;
+    opcion.textContent = `${filtro.emoji} ${filtro.label} (${count})`;
 
     if (filtro.id === filtroActual) {
-      boton.classList.add('activo');
-
-      if (filtroActualTexto) {
-        filtroActualTexto.textContent = `${filtro.label} (${count})`;
-      }
+      opcion.selected = true;
     }
 
-    boton.addEventListener('click', () => {
-      filtroActual = filtro.id;
-
-      if (filtroActualTexto) {
-        filtroActualTexto.textContent = `${filtro.label} (${contarPorFiltro(filtro.id)})`;
-      }
-
-      generarFiltrosConContadores();
-      aplicarFiltro();
-
-      grupoFiltros.classList.remove('abierto');
-
-      if (botonMenuFiltros) {
-        botonMenuFiltros.classList.remove('activo');
-      }
-    });
-
-    grupoFiltros.appendChild(boton);
+    selectFiltros.appendChild(opcion);
   });
+
+  selectFiltros.onchange = function () {
+    filtroActual = this.value;
+    aplicarFiltro();
+    generarFiltrosConContadores();
+  };
 }
 
 // ============ RENDER ============
