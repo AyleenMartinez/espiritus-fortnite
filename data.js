@@ -1,6 +1,6 @@
 // ============================================================
 // DATA.JS - Datos de Espíritus Fortnite
-// Colección actual: 15 espíritus x 4 variantes + Maní único = 61
+// Colección actual: 15 espíritus x 5 variantes + Maní único = 76
 // ============================================================
 
 const variantesComunes = [
@@ -31,7 +31,21 @@ const variantesComunes = [
     coleccion: "actual",
     estado: "activo",
     bonus: "30% más munición al recoger"
-  }
+  },
+  {
+    id: "holofoil",
+    nombre: "Holofoil",
+    coleccion: "actual",
+    estado: "activo",
+    bonus: "Variante holográfica"
+  },
+  /*{
+  id: "gem",
+  nombre: "Gem",
+  coleccion: "actual",
+  estado: "activo",
+  bonus: "Variante gema"
+}*/
 ];
 
 function crearVariantes(idEspiritu) {

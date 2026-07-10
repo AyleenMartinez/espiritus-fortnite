@@ -1,8 +1,9 @@
 ﻿/* ============================================================
    STYLES.CSS - Colección de Espíritus Fortnite
-   Diseño compacto inspirado en grilla de colección.
+   Versión limpia: sin repetidos, con 6 variantes responsive.
    ============================================================ */
 
+/* ============ VARIABLES ============ */
 :root {
   --fondo: #0b1024;
   --panel: #151c30;
@@ -20,6 +21,7 @@
   --transicion: 180ms ease;
 }
 
+/* ============ RESET ============ */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -30,22 +32,29 @@ html,
 body {
   width: 100%;
   min-height: 100%;
-  background:
-    radial-gradient(circle at top left, rgba(124, 58, 237, 0.18), transparent 28rem),
-    linear-gradient(135deg, #080d20 0%, #121832 55%, #0b1024 100%);
-  background-attachment: fixed;
-  color: var(--texto);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
   overflow-x: hidden;
+  color: var(--texto);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(124, 58, 237, 0.18), transparent 28rem),
+    linear-gradient(135deg, #080d20 0%, #121832 55%, #0b1024 100%);
+  background-attachment: fixed;
 }
 
+button,
+input,
+select {
+  font-family: inherit;
+}
+
+/* ============ LAYOUT GENERAL ============ */
 .contenedor-principal {
   width: min(1400px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 18px 0 40px;
+  padding: 18px 0 42px;
 }
 
 /* ============ ENCABEZADO ============ */
@@ -107,7 +116,7 @@ body {
   font-size: clamp(1.1rem, 2vw, 1.85rem);
 }
 
-/* ============ PROGRESO ============ */
+/* ============ BARRA DE PROGRESO ============ */
 .contenedor-progreso {
   margin-bottom: 18px;
   padding: 14px;
@@ -159,27 +168,24 @@ body {
 }
 
 /* ============ CONTROLES ============ */
-.seccion-controles {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 22px;
-}
-
-.fila-superior {
-  display: flex;
+.barra-controles {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 360px 120px;
   gap: 12px;
   align-items: center;
+  margin: 18px 0 22px;
 }
 
 .contenedor-buscador {
-  flex: 1;
+  width: 100%;
   min-width: 0;
 }
 
 .buscador {
   width: 100%;
-  padding: 13px 16px;
+  min-height: 44px;
+  padding: 12px 16px;
   border: 1px solid var(--borde);
   border-radius: 9px;
   background: rgba(6, 10, 22, 0.68);
@@ -198,26 +204,55 @@ body {
   color: var(--texto-suave);
 }
 
-.grupo-acciones {
+.filtro-compacto {
+  width: 100%;
+  min-height: 44px;
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: rgba(8, 13, 28, 0.72);
 }
 
-.boton-accion,
-.boton-filtro,
-.boton-variante {
-  border: none;
-  font-family: inherit;
+.filtro-compacto label {
+  color: var(--texto-suave);
+  font-size: 0.82rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.select-filtros {
+  width: 100%;
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 1px solid rgba(168, 85, 247, 0.55);
+  border-radius: 10px;
+  background: var(--panel-2);
+  color: var(--texto);
+  font-size: 0.82rem;
   font-weight: 800;
   cursor: pointer;
+  outline: none;
+}
+
+.select-filtros:focus {
+  border-color: var(--rosa);
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.16);
 }
 
 .boton-accion {
-  padding: 12px 18px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
   border: 1px solid var(--morado);
   border-radius: 9px;
   background: rgba(124, 58, 237, 0.28);
   color: #fff;
+  font-size: 0.9rem;
+  font-weight: 900;
+  cursor: pointer;
   white-space: nowrap;
   transition: transform var(--transicion), background var(--transicion), box-shadow var(--transicion);
 }
@@ -228,37 +263,14 @@ body {
   box-shadow: 0 8px 18px rgba(124, 58, 237, 0.25);
 }
 
-.fila-filtros {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.boton-filtro {
-  padding: 10px 14px;
-  border: 1px solid var(--borde);
-  border-radius: 8px;
-  background: rgba(124, 58, 237, 0.10);
-  color: var(--texto);
-  font-size: 0.9rem;
-  white-space: nowrap;
-  transition: background var(--transicion), border-color var(--transicion), box-shadow var(--transicion);
-}
-
-.boton-filtro:hover,
-.boton-filtro.activo {
-  border-color: var(--morado);
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.50), rgba(236, 72, 153, 0.26));
-  box-shadow: 0 0 14px rgba(124, 58, 237, 0.22);
-}
-
-/* ============ BLOQUES ============ */
+/* ============ CONTENEDOR DE BLOQUES ============ */
 #contenedor-tarjetas {
   display: flex;
   flex-direction: column;
   gap: 26px;
 }
 
+/* ============ BLOQUE DE ESPÍRITU ============ */
 .bloque-espiritu {
   padding: 20px;
   border: 1px solid var(--borde);
@@ -278,7 +290,7 @@ body {
 }
 
 .bloque-header {
-  margin-bottom: 18px;
+  margin-bottom: 22px;
   padding-bottom: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.10);
 }
@@ -302,34 +314,64 @@ body {
 }
 
 .habilidad-espiritu {
-  margin: 10px 0 0;
-  line-height: 1.45;
+  margin-top: 8px;
   color: var(--texto);
+  line-height: 1.25;
 }
 
 .meta-espiritu {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 12px;
-  margin-top: 10px;
+  gap: 6px 10px;
+  margin-top: 8px;
   color: var(--texto-suave);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
 }
 
-/* ============ CARDS ============ */
+/* ============ GRILLA DE VARIANTES ============ */
 .contenedor-variantes {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  gap: 12px;
+  margin-top: 12px;
 }
 
+/* PC grande: 6 en una línea */
+@media (min-width: 1450px) {
+  .bloque-espiritu:not(.bloque-especial-unico) .contenedor-variantes {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+/* Notebook / PC normal: 3 y 3 */
+@media (min-width: 900px) and (max-width: 1449px) {
+  .bloque-espiritu:not(.bloque-especial-unico) .contenedor-variantes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Tablet: 2 columnas */
+@media (min-width: 650px) and (max-width: 899px) {
+  .bloque-espiritu:not(.bloque-especial-unico) .contenedor-variantes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Celular: 1 columna */
+@media (max-width: 649px) {
+  .bloque-espiritu:not(.bloque-especial-unico) .contenedor-variantes {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============ CARD ============ */
 .tarjeta-variante {
-  min-height: 292px;
-  padding: 16px;
+  min-width: 0;
+  min-height: 270px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  text-align: left;
+  text-align: center;
   position: relative;
   overflow: hidden;
   border: 2px solid transparent;
@@ -350,19 +392,38 @@ body {
   box-shadow: inset 0 0 12px rgba(16, 185, 129, 0.16), 0 0 16px rgba(16, 185, 129, 0.16);
 }
 
+.tarjeta-variante.dominado {
+  border-color: #facc15;
+  box-shadow:
+    inset 0 0 12px rgba(245, 158, 11, 0.18),
+    0 0 18px rgba(245, 158, 11, 0.20);
+}
+
+.tarjeta-variante.bloqueada {
+  cursor: not-allowed;
+  opacity: 0.68;
+  border-color: rgba(245, 158, 11, 0.34);
+}
+
+.tarjeta-variante.bloqueada:hover {
+  transform: none;
+}
+
+/* ============ IMAGEN CARD ============ */
 .imagen-variante {
   width: 100%;
-  height: 154px;
+  height: 126px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  overflow: hidden;
 }
 
 .imagen-variante img,
 .imagen-placeholder {
-  width: 140px;
-  height: 140px;
+  width: 118px;
+  height: 118px;
   border-radius: 18px;
   object-fit: cover;
   object-position: center;
@@ -378,12 +439,17 @@ body {
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 2.5rem;
+  font-size: 2.4rem;
   font-weight: 900;
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: inset 0 0 16px rgba(255, 255, 255, 0.10);
 }
 
+.tarjeta-variante.bloqueada .imagen-placeholder {
+  display: flex;
+}
+
+/* ============ PLACEHOLDERS ============ */
 .placeholder-base {
   background: linear-gradient(135deg, #0ea5e9, #7c3aed);
 }
@@ -401,21 +467,33 @@ body {
   background: radial-gradient(circle at top left, #f0abfc, #7c3aed, #020617 78%);
 }
 
+.placeholder-holofoil {
+  background: linear-gradient(135deg, #ec4899, #a855f7, #0ea5e9, #10b981);
+  color: #fff;
+}
+
+.placeholder-gem {
+  background: linear-gradient(135deg, #7dd3fc, #38bdf8, #2563eb);
+  color: #fff;
+}
+
+/* ============ TEXTO CARD ============ */
 .titulo-card {
-  min-height: 42px;
-  margin-bottom: 8px;
+  min-height: auto;
+  margin-bottom: 6px;
   color: var(--texto);
-  font-size: 1.03rem;
-  line-height: 1.15;
+  font-size: 0.95rem;
+  line-height: 1.1;
   font-weight: 900;
 }
 
 .badges-card {
-  min-height: 24px;
+  min-height: auto;
   display: flex;
+  justify-content: center;
   gap: 6px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .etiqueta-rareza {
@@ -432,6 +510,15 @@ body {
   letter-spacing: 0.25px;
 }
 
+.bonus-variante {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: var(--texto-suave);
+  font-size: 0.78rem;
+  line-height: 1.25;
+}
+
+/* ============ RAREZAS ============ */
 .rareza-raro {
   background: #0284c7;
   color: #fff;
@@ -469,24 +556,31 @@ body {
   border-color: #9ca3af;
 }
 
-.bonus-variante {
-  min-height: 42px;
+/* ============ BOTONES CARD ============ */
+.acciones-variante {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   margin-top: auto;
-  margin-bottom: 12px;
-  color: var(--texto-suave);
-  font-size: 0.83rem;
-  line-height: 1.25;
+}
+
+.boton-variante,
+.boton-dominado {
+  width: 100%;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 900;
+  cursor: pointer;
+  transition: background var(--transicion), transform var(--transicion), box-shadow var(--transicion);
 }
 
 .boton-variante {
-  width: 100%;
-  min-height: 36px;
-  padding: 8px 10px;
-  border-radius: 8px;
+  min-height: 32px;
+  padding: 6px 8px;
+  border: none;
   background: rgba(124, 58, 237, 0.54);
   color: #fff;
-  font-size: 0.93rem;
-  transition: background var(--transicion), transform var(--transicion), box-shadow var(--transicion);
+  font-size: 0.82rem;
 }
 
 .boton-variante:hover {
@@ -498,20 +592,44 @@ body {
   background: var(--verde);
 }
 
-.tarjeta-variante.bloqueada {
-  cursor: not-allowed;
-  opacity: 0.68;
-  border-color: rgba(245, 158, 11, 0.34);
+.boton-dominado {
+  min-height: 28px;
+  padding: 5px 8px;
+  border: 1px solid rgba(245, 158, 11, 0.55);
+  background: rgba(245, 158, 11, 0.12);
+  color: #fcd34d;
+  font-size: 0.75rem;
 }
 
-.tarjeta-variante.bloqueada:hover {
-  transform: none;
+.boton-dominado:hover {
+  background: rgba(245, 158, 11, 0.22);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
 }
 
-.tarjeta-variante.bloqueada .imagen-placeholder {
+.boton-dominado.activo {
+  background: linear-gradient(135deg, #facc15, #f59e0b);
+  color: #1f1600;
+  border-color: #fde68a;
+}
+
+.insignia-dominado {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #facc15, #f59e0b);
+  color: #1f1600;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
 }
 
+/* ============ CARD BLOQUEADA ============ */
 .estado-bloqueado {
   width: 100%;
   margin-top: auto;
@@ -537,10 +655,7 @@ body {
   text-align: center;
 }
 
-.bloque-especial-unico .bloque-titulo-linea {
-  justify-content: center;
-}
-
+.bloque-especial-unico .bloque-titulo-linea,
 .bloque-especial-unico .meta-espiritu {
   justify-content: center;
 }
@@ -578,118 +693,7 @@ body {
   font-size: 1rem;
 }
 
-/* ============ AJUSTE FINAL DE TEXTO Y ESPACIADO ============ */
-
-/* bloque del espíritu más compacto */
-.bloque-header {
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-}
-
-.habilidad-espiritu {
-  margin-top: 8px;
-  line-height: 1.25;
-}
-
-.meta-espiritu {
-  margin-top: 8px;
-  gap: 6px 10px;
-  font-size: 0.78rem;
-}
-
-/* cards más compactas */
-.contenedor-variantes {
-  gap: 12px;
-}
-
-.tarjeta-variante {
-  min-height: 250px;
-  padding: 14px 14px 12px 14px;
-}
-
-/* imagen */
-.imagen-variante {
-  height: 138px;
-  margin-bottom: 8px;
-}
-
-.imagen-variante img,
-.imagen-placeholder {
-  width: 126px;
-  height: 126px;
-  border-radius: 22px;
-}
-
-/* nombre bajo la imagen */
-.titulo-card {
-  min-height: auto;
-  margin-bottom: 6px;
-  text-align: center;
-  font-size: 0.98rem;
-  line-height: 1.1;
-}
-
-/* badge rareza dentro de la card */
-.badges-card {
-  min-height: auto;
-  justify-content: center;
-  margin-bottom: 8px;
-}
-
-/* bonus más compacto */
-.bonus-variante {
-  min-height: 34px;
-  margin-bottom: 10px;
-  text-align: center;
-  font-size: 0.8rem;
-  line-height: 1.15;
-}
-
-/* botón */
-.boton-variante {
-  min-height: 34px;
-  padding: 7px 10px;
-  font-size: 0.9rem;
-}
-
-/* por si quedara alguna rareza arriba */
-.bloque-titulo-linea > .etiqueta-rareza {
-  display: none;
-}
-
-/* ============ AJUSTE FINO DE ESPACIOS ============ */
-
-/* 1. Más espacio entre la info del espíritu y las cards */
-.bloque-header {
-  margin-bottom: 22px;
-  padding-bottom: 16px;
-}
-
-.contenedor-variantes {
-  margin-top: 12px;
-}
-
-/* 2. Reducir espacio entre bonus y botón */
-.bonus-variante {
-  margin-top: 0 !important;
-  margin-bottom: 8px !important;
-  min-height: auto !important;
-  max-height: none !important;
-  line-height: 1.25;
-}
-
-/* El botón ya no debe irse al fondo dejando un espacio gigante */
-.boton-variante {
-  margin-top: 0 !important;
-}
-
-/* Opcional: que la card no fuerce tanto alto vacío */
-.tarjeta-variante {
-  min-height: 270px;
-}
-
 /* ============ BOTÓN FLOTANTE SUBIR ============ */
-
 .boton-subir {
   position: fixed;
   right: 22px;
@@ -723,364 +727,46 @@ body {
   transform: translateY(-3px);
 }
 
-/* ============ MENÚ HAMBURGUESA DE FILTROS EN CELULAR ============ */
+/* ============ AJUSTES PC GRANDE ============ */
+@media (min-width: 1450px) {
+  .tarjeta-variante {
+    min-height: 250px;
+    padding: 12px 10px;
+  }
 
-.contenedor-menu-filtros {
-  width: 100%;
-}
+  .imagen-variante {
+    height: 108px;
+  }
 
-.boton-menu-filtros {
-  display: none;
-  width: 100%;
-  min-height: 52px;
-  padding: 12px 16px;
-  border: 1px solid var(--morado);
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.45), rgba(236, 72, 153, 0.20));
-  color: var(--texto);
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: 900;
-  cursor: pointer;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  box-shadow: 0 0 16px rgba(124, 58, 237, 0.18);
-}
+  .imagen-variante img,
+  .imagen-placeholder {
+    width: 100px;
+    height: 100px;
+  }
 
-.boton-menu-filtros.activo {
-  border-color: var(--rosa);
-  box-shadow: 0 0 18px rgba(236, 72, 153, 0.28);
-}
+  .titulo-card {
+    font-size: 0.82rem;
+  }
 
-#filtro-actual-texto {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--texto-suave);
-  text-align: right;
-}
+  .bonus-variante {
+    font-size: 0.68rem;
+  }
 
-/* ============ BOTÓN DOMINADO ============ */
-
-.acciones-variante {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.boton-dominado {
-  width: 100%;
-  min-height: 30px;
-  padding: 6px 10px;
-  border: 1px solid rgba(245, 158, 11, 0.55);
-  border-radius: 8px;
-  background: rgba(245, 158, 11, 0.12);
-  color: #fcd34d;
-  font-family: inherit;
-  font-size: 0.78rem;
-  font-weight: 900;
-  cursor: pointer;
-  transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
-}
-
-.boton-dominado:hover {
-  background: rgba(245, 158, 11, 0.22);
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
-}
-
-.boton-dominado.activo {
-  background: linear-gradient(135deg, #facc15, #f59e0b);
-  color: #1f1600;
-  border-color: #fde68a;
-}
-
-.tarjeta-variante.dominado {
-  border-color: #facc15;
-  box-shadow:
-    inset 0 0 12px rgba(245, 158, 11, 0.18),
-    0 0 18px rgba(245, 158, 11, 0.20);
-}
-
-.insignia-dominado {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 2;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #facc15, #f59e0b);
-  color: #1f1600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
-}
-
-@media (max-width: 760px) {
-  .acciones-variante {
-    gap: 10px;
+  .boton-variante {
+    min-height: 30px;
+    font-size: 0.72rem;
   }
 
   .boton-dominado {
-    min-height: 38px;
-    font-size: 0.95rem;
-    border-radius: 10px;
-  }
-
-  .insignia-dominado {
-    width: 36px;
-    height: 36px;
-    font-size: 1.15rem;
+    min-height: 26px;
+    font-size: 0.68rem;
   }
 }
 
-/* ============ FILTRO COMPACTO ============ */
-
-.filtro-compacto {
-  width: 100%;
-  max-width: 360px;
-  margin: 10px auto 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border: 1px solid var(--borde);
-  border-radius: 14px;
-  background: rgba(8, 13, 28, 0.72);
-}
-
-.filtro-compacto label {
-  color: var(--texto-suave);
-  font-size: 0.9rem;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.select-filtros {
-  width: 100%;
-  min-height: 38px;
-  padding: 8px 12px;
-  border: 1px solid rgba(168, 85, 247, 0.55);
-  border-radius: 10px;
-  background: var(--panel-2);
-  color: var(--texto);
-  font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 800;
-  cursor: pointer;
-  outline: none;
-}
-
-.select-filtros:focus {
-  border-color: var(--rosa);
-  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.16);
-}
-
-@media (max-width: 760px) {
-  .filtro-compacto {
-    max-width: 100%;
-    margin-top: 8px;
-  }
-
-  .select-filtros {
-    font-size: 0.88rem;
-  }
-}
-
-/* ============ CONTROLES EN UNA SOLA LÍNEA ============ */
-
-.barra-controles {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 360px 120px;
-  gap: 12px;
-  align-items: center;
-  margin: 18px 0 16px;
-}
-
-.grupo-buscador {
-  width: 100%;
-}
-
-.input-buscador {
-  width: 100%;
-}
-
-.filtro-compacto {
-  width: 100%;
-  max-width: none;
-  margin: 0;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-}
-
-.filtro-compacto label {
-  font-size: 0.82rem;
-  white-space: nowrap;
-}
-
-.select-filtros {
-  min-height: 34px;
-  font-size: 0.82rem;
-  padding: 6px 10px;
-}
-
-.boton-accion {
-  width: 100%;
-  min-height: 44px;
-}
-
-/* Tablet */
+/* ============ RESPONSIVE TABLET ============ */
 @media (max-width: 950px) {
   .barra-controles {
     grid-template-columns: 1fr 260px 110px;
-  }
-}
-
-/* Celular: se acomoda en 2 líneas para no apretarse horrible */
-@media (max-width: 760px) {
-  .barra-controles {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .filtro-compacto {
-    max-width: 100%;
-  }
-
-  .boton-accion {
-    min-height: 48px;
-  }
-}
-
-/* PC: filtros visibles normales */
-@media (min-width: 761px) {
-  .boton-menu-filtros {
-    display: none !important;
-  }
-
-  .fila-filtros {
-    display: flex !important;
-  }
-}
-
-/* CELULAR: filtros escondidos */
-@media (max-width: 760px) {
-  .boton-menu-filtros {
-    display: flex !important;
-  }
-
-  .fila-filtros {
-    display: none !important;
-    grid-template-columns: 1fr !important;
-    gap: 8px !important;
-    margin-top: 10px !important;
-    padding: 10px !important;
-    border: 1px solid var(--borde) !important;
-    border-radius: 12px !important;
-    background: rgba(8, 13, 28, 0.82) !important;
-  }
-
-  .fila-filtros.abierto {
-    display: grid !important;
-  }
-
-  .boton-filtro {
-    width: 100% !important;
-    min-height: 46px !important;
-    text-align: center !important;
-    font-size: 0.95rem !important;
-  }
-}
-
-@media (max-width: 760px) {
-  .boton-subir {
-    right: 16px;
-    bottom: 18px;
-    width: 48px;
-    height: 48px;
-    font-size: 1.6rem;
-  }
-}
-
-/* ============ MENÚ DE FILTROS RESPONSIVE ============ */
-
-.contenedor-menu-filtros {
-  width: 100%;
-}
-
-.boton-menu-filtros {
-  display: none;
-  width: 100%;
-  min-height: 52px;
-  padding: 12px 16px;
-  border: 1px solid var(--morado);
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.45), rgba(236, 72, 153, 0.20));
-  color: var(--texto);
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: 900;
-  cursor: pointer;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  box-shadow: 0 0 16px rgba(124, 58, 237, 0.18);
-}
-
-#filtro-actual-texto {
-  font-size: 0.86rem;
-  font-weight: 700;
-  color: var(--texto-suave);
-  text-align: right;
-}
-
-/* Desktop: filtros normales */
-@media (min-width: 761px) {
-  .fila-filtros {
-    display: flex;
-  }
-}
-
-/* Celular: filtros escondidos en menú */
-@media (max-width: 760px) {
-  .boton-menu-filtros {
-    display: flex;
-  }
-
-  .fila-filtros {
-    display: none;
-    grid-template-columns: 1fr;
-    gap: 8px;
-    margin-top: 10px;
-    padding: 10px;
-    border: 1px solid var(--borde);
-    border-radius: 12px;
-    background: rgba(8, 13, 28, 0.72);
-  }
-
-  .fila-filtros.abierto {
-    display: grid;
-  }
-
-  .boton-filtro {
-    width: 100%;
-    justify-content: center;
-    min-height: 46px;
-    font-size: 0.95rem;
-  }
-}
-
-/* ============ RESPONSIVE ============ */
-@media (max-width: 1100px) {
-  .contenedor-variantes {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -1095,27 +781,13 @@ body {
     gap: 10px;
   }
 
-  .fila-superior {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .grupo-acciones {
-    justify-content: stretch;
+  .barra-controles {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .boton-accion {
-    width: 100%;
-  }
-
-  .fila-filtros {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .boton-filtro {
-    white-space: normal;
-    min-height: 42px;
+    min-height: 48px;
   }
 
   .bloque-espiritu {
@@ -1127,90 +799,46 @@ body {
     align-items: flex-start;
   }
 
-  .contenedor-variantes {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .tarjeta-variante {
-    min-height: 250px;
-    padding: 12px;
-  }
-
-  .imagen-variante {
-    height: 126px;
-  }
-
-  .imagen-variante img,
-  .imagen-placeholder {
-    width: 112px;
-    height: 112px;
-    border-radius: 16px;
-  }
-
-  .titulo-card {
-    font-size: 0.95rem;
-  }
-
-  .bonus-variante {
-    font-size: 0.76rem;
+  .boton-subir {
+    right: 16px;
+    bottom: 18px;
+    width: 48px;
+    height: 48px;
+    font-size: 1.6rem;
   }
 }
 
-@media (max-width: 430px) {
-  .seccion-estadisticas {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .contenedor-variantes {
-    grid-template-columns: 1fr;
-  }
-
-  .tarjeta-variante {
-    min-height: 245px;
-  }
-
-  .imagen-variante {
-    height: 132px;
-  }
-
-  .imagen-variante img,
-  .imagen-placeholder {
-    width: 118px;
-    height: 118px;
-  }
-}
-
-/* ============ IMÁGENES MÁS GRANDES EN CELULAR ============ */
-
-@media (max-width: 760px) {
+/* ============ RESPONSIVE CELULAR ============ */
+@media (max-width: 649px) {
   .tarjeta-variante {
     min-height: auto;
     padding: 22px 18px 18px;
   }
 
   .imagen-variante {
-    height: 210px;
+    height: 220px;
     margin-bottom: 16px;
-    overflow: hidden;
   }
 
   .imagen-variante img,
   .imagen-placeholder {
-    width: 190px;
-    height: 190px;
-    border-radius: 30px;
+    width: 205px;
+    height: 205px;
+    border-radius: 32px;
   }
 
   .imagen-variante img {
-    object-fit: cover;
-    object-position: center;
-    transform: scale(1.08);
+    transform: scale(1.05);
   }
 
   .titulo-card {
     font-size: 1.35rem;
     margin-bottom: 10px;
+  }
+
+  .etiqueta-rareza {
+    font-size: 0.78rem;
+    padding: 5px 9px;
   }
 
   .bonus-variante {
@@ -1219,14 +847,35 @@ body {
     margin-bottom: 14px;
   }
 
+  .acciones-variante {
+    gap: 10px;
+  }
+
   .boton-variante {
     min-height: 48px;
-    font-size: 1.12rem;
+    font-size: 1.08rem;
     border-radius: 12px;
+  }
+
+  .boton-dominado {
+    min-height: 40px;
+    font-size: 0.95rem;
+    border-radius: 10px;
+  }
+
+  .insignia-dominado {
+    width: 36px;
+    height: 36px;
+    font-size: 1.15rem;
   }
 }
 
+/* ============ CELULAR PEQUEÑO ============ */
 @media (max-width: 430px) {
+  .seccion-estadisticas {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .imagen-variante {
     height: 230px;
   }
@@ -1235,10 +884,12 @@ body {
   .imagen-placeholder {
     width: 210px;
     height: 210px;
-    border-radius: 32px;
   }
+}
 
-  .titulo-card {
-    font-size: 1.4rem;
+/* PC grande: 5 en una línea */
+@media (min-width: 1200px) {
+  .bloque-espiritu:not(.bloque-especial-unico) .contenedor-variantes {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }

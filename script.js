@@ -62,11 +62,11 @@ function normalizarClase(texto) {
 }
 
 function obtenerNombreCorto(espiritu) {
-    return espiritu.nombreES
-        .replace('Espíritu del ', '')
-        .replace('Espíritu de ', '')
-        .replace('Espíritu ', '')
-        .trim();
+  return espiritu.nombreES
+    .replace('Espíritu del ', '')
+    .replace('Espíritu de ', '')
+    .replace('Espíritu ', '')
+    .trim();
 }
 
 function obtenerTituloTarjeta(espiritu, variante) {
@@ -84,7 +84,9 @@ function obtenerPlaceholderVariante(varianteId) {
     base: '●',
     gold: '★',
     gummy: '🍬',
-    galaxy: '✦'
+    galaxy: '✦',
+    holofoil: '🌈',
+    gem: '💎'
   };
 
   return placeholders[varianteId] || '?';
@@ -146,7 +148,8 @@ function calcularEstadisticas() {
     base: 0,
     gold: 0,
     gummy: 0,
-    galaxy: 0
+    galaxy: 0,
+    holofoil: 0
   };
 
   espiritusData.forEach(espiritu => {
@@ -257,6 +260,8 @@ function generarFiltrosConContadores() {
     { id: 'gold', emoji: '⭐', label: 'Gold' },
     { id: 'gummy', emoji: '🍬', label: 'Gummy' },
     { id: 'galaxy', emoji: '✨', label: 'Galaxy' },
+    { id: 'holofoil', emoji: '🌈', label: 'holofoil' },
+    { id: 'gem', emoji: '💎', label: 'Gem' },
     { id: 'proximamente', emoji: '🔒', label: 'Próximamente' }
   ];
 
@@ -529,7 +534,7 @@ function debeVerseVisible(tarjeta) {
     if (esBloqueada) return false;
   }
 
-  if (['base', 'gold', 'gummy', 'galaxy'].includes(filtroActual)) {
+  if (['base', 'gold', 'gummy', 'galaxy', 'holofoil'].includes(filtroActual)) {
     if (tarjeta.dataset.variante !== filtroActual) return false;
     if (esBloqueada) return false;
   }
