@@ -1,378 +1,458 @@
 // ============================================================
-// DATA.JS - Datos de Espíritus Fortnite
-// Colección actual: 15 espíritus x 5 variantes + Maní único = 76
+// DATA.JS - Sprites Fortnite
+// Base principal: fortnite.gg/sprites
+// Los "unreleased" se muestran, pero no cuentan en progreso.
 // ============================================================
 
-const variantesComunes = [
-  {
+const ESTADO_ACTIVO = "activo";
+const ESTADO_UNRELEASED = "unreleased";
+
+const VARIANTES = {
+  base: {
     id: "base",
     nombre: "Base",
-    coleccion: "actual",
-    estado: "activo",
     bonus: "Sin bonus especial"
   },
-  {
+  gold: {
     id: "gold",
     nombre: "Gold",
-    coleccion: "actual",
-    estado: "activo",
     bonus: "3x más XP de Sprite por eliminaciones"
   },
-  {
+  gummy: {
     id: "gummy",
     nombre: "Gummy",
-    coleccion: "actual",
-    estado: "activo",
     bonus: "20% más de Polvo de Sprite"
   },
-  {
+  galaxy: {
     id: "galaxy",
     nombre: "Galaxy",
-    coleccion: "actual",
-    estado: "activo",
     bonus: "30% más munición al recoger"
   },
-  {
+  gem: {
+    id: "gem",
+    nombre: "Gem",
+    bonus: "Variante Gem"
+  },
+  holofoil: {
     id: "holofoil",
     nombre: "Holofoil",
-    coleccion: "actual",
-    estado: "activo",
-    bonus: "Variante holográfica"
+    bonus: "Variante Holofoil"
   },
-  /*{
-  id: "gem",
-  nombre: "Gem",
-  coleccion: "actual",
-  estado: "activo",
-  bonus: "Variante gema"
-}*/
-];
+  cube: {
+    id: "cube",
+    nombre: "Cube",
+    bonus: "Variante Cube"
+  },
+  quack: {
+    id: "quack",
+    nombre: "Quack",
+    bonus: "Variante Quack"
+  }
+};
 
-function crearVariantes(idEspiritu) {
-  return variantesComunes.map(variante => ({
-    ...variante,
-    imagen: `img/${idEspiritu}-${variante.id}.png`
-  }));
+function crearVariante(idSprite, config) {
+  const idVariante = typeof config === "string" ? config : config.id;
+  const opciones = typeof config === "string" ? {} : config;
+  const base = VARIANTES[idVariante];
+
+  if (!base) {
+    throw new Error(`Variante no definida: ${idVariante}`);
+  }
+
+  const estado = opciones.estado || ESTADO_ACTIVO;
+
+  return {
+    id: idVariante,
+    nombre: opciones.nombre || base.nombre,
+    rareza: opciones.rareza || (idVariante === "base" ? null : "Especial"),
+    bonus: opciones.bonus || base.bonus,
+    estado,
+    coleccion: estado === ESTADO_UNRELEASED ? "unreleased" : "actual",
+    imagen: opciones.imagen || `img/${idSprite}-${idVariante}.png`
+  };
 }
 
-const espiritusData = [
+function crearVariantes(idSprite, variantes) {
+  return variantes.map(variante => crearVariante(idSprite, variante));
+}
+
+function variantesCompletas(config = {}) {
+  const {
+    gem = ESTADO_UNRELEASED,
+    holofoil = ESTADO_UNRELEASED,
+    cube = ESTADO_UNRELEASED,
+    quack = ESTADO_UNRELEASED
+  } = config;
+
+  return [
+    "base",
+    "gold",
+    "gummy",
+    "galaxy",
+    { id: "gem", estado: gem },
+    { id: "holofoil", estado: holofoil },
+    { id: "cube", estado: cube },
+    { id: "quack", estado: quack }
+  ];
+}
+
+function varianteUnica(idSprite, config = {}) {
+  return [
+    crearVariante(idSprite, {
+      id: "base",
+      nombre: "Base",
+      estado: config.estado || ESTADO_ACTIVO,
+      rareza: config.rareza || null,
+      bonus: config.bonus || "Único, sin variantes especiales",
+      imagen: config.imagen || `img/${idSprite}-base.png`
+    })
+  ];
+}
+
+const spritesData = [
+  {
+    id: "batman",
+    nombreES: "Batman",
+    nombreEN: "Batman Sprite",
+    rarezaBase: "Mítico",
+    habilidad: "Por confirmar.",
+    ubicacion: "Por confirmar",
+    fuente: "fortnite.gg/sprites",
+    variantes: crearVariantes("batman", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_ACTIVO,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
+  },
+
   {
     id: "agua",
-    nombreES: "Espíritu de Agua",
+    nombreES: "Agua",
     nombreEN: "Water Sprite",
-    coleccion: "actual",
-    permiteVariantes: true,
     rarezaBase: "Raro",
-    costoInvocacion: 100,
-    introducido: "C7S3",
-    habilidad: "Rellena tu escudo y el de tus aliados si estás en el agua.",
-    ubicacion: "Cerca de ríos y playas",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "confirmado-comunidad",
-    variantes: crearVariantes("agua")
+    habilidad: "Rellena escudo mientras estás en el agua para ti y tu escuadrón cercano.",
+    ubicacion: "Agua / zonas costeras",
+    fuente: "Epic / fortnite.gg",
+    variantes: crearVariantes("agua", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_ACTIVO,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
   },
 
   {
     id: "tierra",
-    nombreES: "Espíritu de Tierra",
+    nombreES: "Tierra",
     nombreEN: "Earth Sprite",
-    coleccion: "actual",
-    permiteVariantes: true,
     rarezaBase: "Raro",
-    costoInvocacion: 100,
-    introducido: "C7S3",
-    habilidad: "Aumenta la probabilidad de encontrar objetos raros al abrir cofres.",
-    ubicacion: "Zonas boscosas y forestales",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "confirmado-comunidad",
-    variantes: crearVariantes("tierra")
+    habilidad: "Puede entregar objetos raros adicionales al abrir cofres.",
+    ubicacion: "Por confirmar",
+    fuente: "Epic / fortnite.gg",
+    variantes: crearVariantes("tierra", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_UNRELEASED,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
   },
 
   {
     id: "fuego",
-    nombreES: "Espíritu de Fuego",
+    nombreES: "Fuego",
     nombreEN: "Fire Sprite",
-    coleccion: "actual",
-    permiteVariantes: true,
     rarezaBase: "Raro",
-    costoInvocacion: 100,
-    introducido: "C7S3",
-    habilidad: "Invoca fuego cuando haces suficiente daño a un enemigo.",
-    ubicacion: "Zonas urbanas",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "confirmado-comunidad",
-    variantes: crearVariantes("fuego")
+    habilidad: "Crea una explosión de fuego al hacer suficiente daño a un enemigo.",
+    ubicacion: "Por confirmar",
+    fuente: "Epic / fortnite.gg",
+    variantes: crearVariantes("fuego", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_ACTIVO,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
   },
 
   {
     id: "pato",
-    nombreES: "Espíritu Patito",
+    nombreES: "Patito",
     nombreEN: "Duck Sprite",
-    coleccion: "actual",
-    permiteVariantes: true,
     rarezaBase: "Épico",
-    costoInvocacion: 3000,
-    introducido: "C7S3",
-    habilidad: "Rellena tus escudos cuando haces un emote, bailas o tocas música.",
+    habilidad: "Hacer emotes o jamming rellena escudo.",
     ubicacion: "Bóvedas",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "confirmado-comunidad",
-    variantes: crearVariantes("pato")
+    fuente: "Epic / fortnite.gg",
+    variantes: crearVariantes("pato", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_UNRELEASED,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
   },
 
   {
     id: "fantasma",
-    nombreES: "Espíritu Fantasma",
+    nombreES: "Fantasma",
     nombreEN: "Ghost Sprite",
-    coleccion: "actual",
-    permiteVariantes: true,
     rarezaBase: "Épico",
-    costoInvocacion: 3000,
-    introducido: "C7S3",
-    habilidad: "Al recargar, te vuelves invisible durante un breve tiempo.",
-    ubicacion: "Durante la noche",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "confirmado-comunidad",
-    variantes: crearVariantes("fantasma")
-  },
-
-  {
-    id: "demonio",
-    nombreES: "Espíritu Demoniaco",
-    nombreEN: "Demon Sprite",
-    coleccion: "actual",
-    permiteVariantes: true,
-    rarezaBase: "Épico",
-    costoInvocacion: 3000,
-    introducido: "C7S3",
-    habilidad: "Al eliminar a un enemigo, robas vida y escudo.",
-    ubicacion: "Cofres de espíritus",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "confirmado-comunidad",
-    variantes: crearVariantes("demonio")
-  },
-
-  {
-    id: "rey",
-    nombreES: "Espíritu Monarca",
-    nombreEN: "King Sprite",
-    coleccion: "actual",
-    permiteVariantes: true,
-    rarezaBase: "Épico",
-    costoInvocacion: 3000,
-    introducido: "C7S3",
-    habilidad: "Aumenta el daño de tu pico.",
-    ubicacion: "Cofres de espíritus",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "confirmado-comunidad",
-    variantes: crearVariantes("rey")
-  },
-
-  {
-    id: "punk",
-    nombreES: "Espíritu Punk",
-    nombreEN: "Punk Sprite",
-    coleccion: "actual",
-    permiteVariantes: true,
-    rarezaBase: "Legendario",
-    costoInvocacion: 5000,
-    introducido: "C7S3",
-    habilidad: "Al dominarlo, puede darte munición infinita.",
-    ubicacion: "Cofres de espíritus",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "confirmado-comunidad",
-    variantes: crearVariantes("punk")
+    habilidad: "Otorga camuflaje por un tiempo al recargar.",
+    ubicacion: "Por confirmar",
+    fuente: "Epic / fortnite.gg",
+    variantes: crearVariantes("fantasma", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_ACTIVO,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
   },
 
   {
     id: "onirico",
-    nombreES: "Espíritu Dormilón",
+    nombreES: "Dormilón",
     nombreEN: "Dream Sprite",
-    coleccion: "actual",
-    permiteVariantes: true,
     rarezaBase: "Legendario",
-    costoInvocacion: 5000,
-    introducido: "C7S3",
-    habilidad: "Cada vez que sube de nivel te da un objeto aleatorio. Al llegar al nivel 5, explota y entrega botín legendario.",
-    ubicacion: "Cajas de almacenamiento",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "confirmado-comunidad",
-    variantes: crearVariantes("onirico")
+    habilidad: "Entrega un objeto aleatorio en cada nivel y explota con botín legendario al nivel máximo.",
+    ubicacion: "Por confirmar",
+    fuente: "Epic / fortnite.gg",
+    variantes: crearVariantes("onirico", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_UNRELEASED,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
   },
 
   {
-    id: "punto-cero",
-    nombreES: "Espíritu del Punto Cero",
-    nombreEN: "Zero Point Sprite",
-    coleccion: "actual",
-    permiteVariantes: true,
+    id: "demonio",
+    nombreES: "Demonio",
+    nombreEN: "Demon Sprite",
+    rarezaBase: "Épico",
+    habilidad: "Roba algo de vida y escudo al eliminar enemigos.",
+    ubicacion: "Por confirmar",
+    fuente: "Epic / fortnite.gg",
+    variantes: crearVariantes("demonio", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_UNRELEASED,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
+  },
+
+  {
+    id: "punk",
+    nombreES: "Punk",
+    nombreEN: "Punk Sprite",
+    rarezaBase: "Legendario",
+    habilidad: "Posiblemente nada... o infinitamente algo.",
+    ubicacion: "Por confirmar",
+    fuente: "Epic / fortnite.gg",
+    variantes: crearVariantes("punk", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_UNRELEASED,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
+  },
+
+  {
+    id: "rey",
+    nombreES: "Monarca",
+    nombreEN: "King Sprite",
+    rarezaBase: "Épico",
+    habilidad: "Aumenta el daño del pico.",
+    ubicacion: "Por confirmar",
+    fuente: "Epic / fortnite.gg",
+    variantes: crearVariantes("rey", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_ACTIVO,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
+  },
+
+  {
+    id: "pollo",
+    nombreES: "Pollo",
+    nombreEN: "Pollo Sprite",
     rarezaBase: "Mítico",
-    costoInvocacion: 7500,
-    introducido: "C7S3",
-    habilidad: "Cuando usas un objeto de curación, aparece una burbuja de escudo a tu alrededor.",
-    ubicacion: "Cofres de espíritus",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "confirmado-comunidad",
-    variantes: crearVariantes("punto-cero")
+    habilidad: "Por confirmar.",
+    ubicacion: "Por confirmar",
+    fuente: "fortnite.gg/sprites",
+    variantes: varianteUnica("pollo", {
+      estado: ESTADO_UNRELEASED,
+      rareza: "Mítico",
+      bonus: "Unreleased"
+    })
   },
 
   {
-    id: "delantero",
-    nombreES: "Espíritu Goleador",
-    nombreEN: "Striker Sprite",
-    coleccion: "actual",
-    permiteVariantes: true,
-    rarezaBase: "Épico",
-    costoInvocacion: 3000,
-    introducido: "C7S3",
-    habilidad: "Obtienes impulso de Overdrive al saltar, trepar o escalar muros.",
-    ubicacion: "Metiendo un gol en la cancha de fútbol",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "por-confirmar",
-    variantes: crearVariantes("delantero")
-  },
-
-  {
-    id: "pez",
-    nombreES: "Espíritu Palito de Pez",
-    nombreEN: "Fishy Sprite",
-    coleccion: "actual",
-    permiteVariantes: true,
-    rarezaBase: "Raro",
-    costoInvocacion: 100,
-    introducido: "C7S3",
-    habilidad: "Nadas más rápido y obtienes un breve aumento de velocidad al recibir daño.",
-    ubicacion: "Cofres de espíritu o zonas de pesca/agua",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "por-confirmar",
-    variantes: crearVariantes("pez")
-  },
-
-  {
-    id: "aura",
-    nombreES: "Espíritu Aura",
-    nombreEN: "Aura Sprite",
-    coleccion: "actual",
-    permiteVariantes: true,
-    rarezaBase: "Épico",
-    costoInvocacion: 3000,
-    introducido: "C7S3",
-    habilidad: "Obtienes una carga de Shock Rock al hacer suficiente daño a enemigos.",
-    ubicacion: "Cofres de espíritus",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "por-confirmar",
-    variantes: crearVariantes("aura")
-  },
-
-  {
-    id: "jefe",
-    nombreES: "Espíritu Jefe",
-    nombreEN: "Boss Sprite",
-    coleccion: "actual",
-    permiteVariantes: true,
-    rarezaBase: "Legendario",
-    costoInvocacion: 5000,
-    introducido: "C7S3",
-    habilidad: "Aumenta tu salud y escudo máximos.",
-    ubicacion: "Puede aparecer al derrotar a un jefe",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "por-confirmar",
-    variantes: crearVariantes("jefe")
-  },
-
-  {
-    id: "parca",
-    nombreES: "Espíritu Parca",
-    nombreEN: "Grim Reaper Sprite",
-    coleccion: "actual",
-    permiteVariantes: true,
-    rarezaBase: "Legendario",
-    costoInvocacion: 7500,
-    introducido: "C7S3",
-    habilidad: "Marca durante un tiempo a los jugadores que te atacan.",
-    ubicacion: "Cofres de espíritus",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "por-confirmar",
-    variantes: crearVariantes("parca")
+    id: "vini-jr",
+    nombreES: "Vini Jr.",
+    nombreEN: "Vini Jr. Sprite",
+    rarezaBase: "Mítico",
+    habilidad: "Por confirmar.",
+    ubicacion: "Por confirmar",
+    fuente: "fortnite.gg/sprites",
+    variantes: varianteUnica("vini-jr", {
+      rareza: "Mítico",
+      bonus: "Único, sin variantes especiales"
+    })
   },
 
   {
     id: "mani-quemado",
-    nombreES: "Espíritu Burnt Peanut",
+    nombreES: "Burnt Peanut",
     nombreEN: "Burnt Peanut Sprite",
-    coleccion: "actual",
-    permiteVariantes: false,
     rarezaBase: "Mítico",
-    costoInvocacion: 7500,
-    introducido: "C7S3",
-    habilidad: "Te da una pequeña probabilidad de conseguir objetos raros al eliminar jugadores.",
-    ubicacion: "Cofres de reliquia",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "confirmado-comunidad",
-    variantes: [
-      {
-        id: "base",
-        nombre: "Base",
-        coleccion: "actual",
-        estado: "activo",
-        imagen: "img/mani-quemado-base.png",
-        bonus: "Único, sin variantes especiales"
-      }
-    ]
+    habilidad: "Por confirmar.",
+    ubicacion: "Por confirmar",
+    fuente: "fortnite.gg/sprites",
+    variantes: varianteUnica("mani-quemado", {
+      rareza: "Mítico",
+      bonus: "Único, sin variantes especiales"
+    })
   },
 
-  // ============================================================
-  // PRÓXIMAMENTE / POR CONFIRMAR
-  // No cuenta en el progreso principal.
-  // ============================================================
+  {
+    id: "punto-cero",
+    nombreES: "Punto Cero",
+    nombreEN: "Zero Point Sprite",
+    rarezaBase: "Mítico",
+    habilidad: "Genera una Shield Bubble Jr. al usar un objeto de curación en ti.",
+    ubicacion: "Por confirmar",
+    fuente: "Epic / fortnite.gg",
+    variantes: crearVariantes("punto-cero", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_UNRELEASED,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
+  },
+
+  {
+    id: "pez",
+    nombreES: "Palito de Pez",
+    nombreEN: "Fishy Sprite",
+    rarezaBase: "Raro",
+    habilidad: "Por confirmar.",
+    ubicacion: "Por confirmar",
+    fuente: "fortnite.gg/sprites",
+    variantes: crearVariantes("pez", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_UNRELEASED,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
+  },
+
+  {
+    id: "delantero",
+    nombreES: "Goleador",
+    nombreEN: "Striker Sprite",
+    rarezaBase: "Épico",
+    habilidad: "Por confirmar.",
+    ubicacion: "Por confirmar",
+    fuente: "fortnite.gg/sprites",
+    variantes: crearVariantes("delantero", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_ACTIVO,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
+  },
+
+  {
+    id: "aura",
+    nombreES: "Aura",
+    nombreEN: "Aura Sprite",
+    rarezaBase: "Épico",
+    habilidad: "Por confirmar.",
+    ubicacion: "Por confirmar",
+    fuente: "fortnite.gg/sprites",
+    variantes: crearVariantes("aura", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_UNRELEASED,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
+  },
+
+  {
+    id: "jefe",
+    nombreES: "Jefe",
+    nombreEN: "Boss Sprite",
+    rarezaBase: "Legendario",
+    habilidad: "Por confirmar.",
+    ubicacion: "Por confirmar",
+    fuente: "fortnite.gg/sprites",
+    variantes: crearVariantes("jefe", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_UNRELEASED,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
+  },
+
+  {
+    id: "parca",
+    nombreES: "Parca",
+    nombreEN: "Grim Sprite",
+    rarezaBase: "Mítico",
+    habilidad: "Por confirmar.",
+    ubicacion: "Por confirmar",
+    fuente: "fortnite.gg/sprites",
+    variantes: crearVariantes("parca", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_UNRELEASED,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
+  },
 
   {
     id: "aire",
-    nombreES: "Espíritu de Aire",
+    nombreES: "Aire",
     nombreEN: "Air Sprite",
-    coleccion: "proximamente",
-    permiteVariantes: true,
-    rarezaBase: "Por confirmar",
-    costoInvocacion: 100,
-    introducido: "C7S3",
-    habilidad: "Aumenta la velocidad de carrera y la altura del salto.",
+    rarezaBase: "Raro",
+    habilidad: "Por confirmar.",
     ubicacion: "Por confirmar",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "por-confirmar",
-    variantes: [
-      {
-        id: "base",
-        nombre: "Base",
-        coleccion: "proximamente",
-        estado: "proximamente",
-        imagen: "img/aire-base.png",
-        bonus: "Por confirmar"
-      }
-    ]
+    fuente: "fortnite.gg/sprites",
+    variantes: crearVariantes("aire", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_ACTIVO,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
   },
 
   {
     id: "siete",
-    nombreES: "Espíritu Siete",
+    nombreES: "Siete",
     nombreEN: "Seven Sprite",
-    coleccion: "proximamente",
-    permiteVariantes: true,
-    rarezaBase: "Por confirmar",
-    costoInvocacion: 5000,
-    introducido: "C7S3",
-    habilidad: "Los rastros de jugadores enemigos son visibles para tu escuadrón.",
+    rarezaBase: "Legendario",
+    habilidad: "Por confirmar.",
     ubicacion: "Por confirmar",
-    fuente: "Wiki/Fandom",
-    estadoConfirmacion: "por-confirmar",
-    variantes: [
-      {
-        id: "base",
-        nombre: "Base",
-        coleccion: "proximamente",
-        estado: "proximamente",
-        imagen: "img/siete-base.png",
-        bonus: "Por confirmar"
-      }
-    ]
+    fuente: "fortnite.gg/sprites",
+    variantes: crearVariantes("siete", variantesCompletas({
+      gem: ESTADO_UNRELEASED,
+      holofoil: ESTADO_ACTIVO,
+      cube: ESTADO_UNRELEASED,
+      quack: ESTADO_UNRELEASED
+    }))
+  },
+
+  {
+    id: "john-wick",
+    nombreES: "John Wick",
+    nombreEN: "John Wick Sprite",
+    rarezaBase: "Mítico",
+    habilidad: "Por confirmar.",
+    ubicacion: "Por confirmar",
+    fuente: "fortnite.gg/sprites",
+    variantes: varianteUnica("john-wick", {
+      estado: ESTADO_UNRELEASED,
+      rareza: "Mítico",
+      bonus: "Unreleased"
+    })
   }
 ];
