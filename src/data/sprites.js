@@ -8,16 +8,6 @@ const U = id => ({
 const BASIC = ["base", "gold", "gummy", "galaxy"];
 
 export const SPRITES = [
-  {
-    id: "batman",
-    nameES: "Batman",
-    nameEN: "Batman Sprite",
-    rarity: "Mítico",
-    ability: "Por confirmar.",
-    location: "Por confirmar",
-    source: "fortnite.gg",
-    variants: [...BASIC, "holofoil", U("gem"), U("cube"), U("quack")]
-  },
 
   {
     id: "agua",
@@ -233,6 +223,17 @@ export const SPRITES = [
     nameES: "Siete",
     nameEN: "Seven Sprite",
     rarity: "Legendario",
+    ability: "Por confirmar.",
+    location: "Por confirmar",
+    source: "fortnite.gg",
+    variants: [...BASIC, "holofoil", U("gem"), U("cube"), U("quack")]
+  },
+
+  {
+    id: "batman",
+    nameES: "Batman",
+    nameEN: "Batman Sprite",
+    rarity: "Mítico",
     ability: "Por confirmar.",
     location: "Por confirmar",
     source: "fortnite.gg",
