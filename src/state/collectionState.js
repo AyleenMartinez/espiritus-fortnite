@@ -5,8 +5,16 @@ export const collectionState = {
   mastered: {},
   filter: "todos",
   search: "",
-  showUnreleased: false
+  showUnreleased: false,
+  obtainedView: "list"
 };
+
+export function setObtainedView(view) {
+  if (view !== "list" && view !== "grid") return;
+
+  collectionState.obtainedView = view;
+  saveState();
+}
 
 export function initState() {
   const saved = loadCollection();
@@ -14,6 +22,7 @@ export function initState() {
   collectionState.collected = saved.collected;
   collectionState.mastered = saved.mastered;
   collectionState.showUnreleased = Boolean(saved.preferences.showUnreleased);
+  collectionState.obtainedView = saved.preferences.obtainedView || "list";
 }
 
 export function saveState() {

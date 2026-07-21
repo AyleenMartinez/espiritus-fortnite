@@ -8,7 +8,6 @@ const U = id => ({
 const BASIC = ["base", "gold", "gummy", "galaxy"];
 
 export const SPRITES = [
-
   {
     id: "agua",
     nameES: "Agua",
@@ -17,7 +16,7 @@ export const SPRITES = [
     ability: "Rellena escudo mientras estás en el agua para ti y tu escuadrón cercano.",
     location: "Agua / zonas costeras",
     source: "Epic / fortnite.gg",
-    variants: [...BASIC, "gem", "holofoil", U("cube"), U("quack")]
+    variants: [...BASIC, U("gem"),"holofoil", U("cube"), U("quack")]
   },
 
   {
@@ -28,7 +27,7 @@ export const SPRITES = [
     ability: "Puede entregar objetos raros adicionales al abrir cofres.",
     location: "Por confirmar",
     source: "Epic / fortnite.gg",
-    variants: [...BASIC, "gem", U("holofoil"), U("cube"), U("quack")]
+    variants: [...BASIC, U("gem"), U("holofoil"), U("cube"), U("quack")]
   },
 
   {
@@ -39,7 +38,7 @@ export const SPRITES = [
     ability: "Crea una explosión de fuego al hacer suficiente daño a un enemigo.",
     location: "Por confirmar",
     source: "Epic / fortnite.gg",
-    variants: [...BASIC, "holofoil", U("gem"), U("cube"), U("quack")]
+    variants: [...BASIC, U("gem"), "holofoil", U("cube"), U("quack")]
   },
 
   {
@@ -50,7 +49,7 @@ export const SPRITES = [
     ability: "Hacer emotes o jamming rellena escudo.",
     location: "Bóvedas",
     source: "Epic / fortnite.gg",
-    variants: [...BASIC, "gem", U("holofoil"), U("cube"), U("quack")]
+    variants: [...BASIC, U("holofoil"), U("cube"), U("quack")]
   },
 
   {
@@ -61,7 +60,7 @@ export const SPRITES = [
     ability: "Otorga camuflaje por un tiempo al recargar.",
     location: "Por confirmar",
     source: "Epic / fortnite.gg",
-    variants: [...BASIC, "holofoil", U("gem"), U("cube"), U("quack")]
+    variants: [...BASIC, U("gem"), "holofoil", U("cube"), U("quack")]
   },
 
   {
@@ -72,7 +71,7 @@ export const SPRITES = [
     ability: "Entrega un objeto aleatorio en cada nivel y explota con botín legendario al nivel máximo.",
     location: "Por confirmar",
     source: "Epic / fortnite.gg",
-    variants: [...BASIC, U("gem"), U("holofoil"), U("cube"), U("quack")]
+    variants: [...BASIC, U("holofoil"), U("cube"), U("quack")]
   },
 
   {
@@ -83,7 +82,7 @@ export const SPRITES = [
     ability: "Roba algo de vida y escudo al eliminar enemigos.",
     location: "Por confirmar",
     source: "Epic / fortnite.gg",
-    variants: [...BASIC, "gem", U("holofoil"), U("cube"), U("quack")]
+    variants: [...BASIC, U("holofoil"), U("cube"), U("quack")]
   },
 
   {
@@ -94,7 +93,7 @@ export const SPRITES = [
     ability: "Posiblemente nada... o infinitamente algo.",
     location: "Por confirmar",
     source: "Epic / fortnite.gg",
-    variants: [...BASIC, "gem", U("holofoil"), U("cube"), U("quack")]
+    variants: [...BASIC, U("holofoil"), U("cube"), U("quack")]
   },
 
   {
@@ -105,7 +104,7 @@ export const SPRITES = [
     ability: "Aumenta el daño del pico.",
     location: "Por confirmar",
     source: "Epic / fortnite.gg",
-    variants: [...BASIC, "holofoil", U("gem"), U("cube"), U("quack")]
+    variants: [...BASIC, U("gem"), "holofoil", U("cube"), U("quack")]
   },
 
   {
@@ -116,7 +115,7 @@ export const SPRITES = [
     ability: "Por confirmar.",
     location: "Por confirmar",
     source: "fortnite.gg",
-    variants: [{ id: "base", status: STATUS.UNRELEASED }]
+    variants: ["base"]
   },
 
   {
@@ -149,7 +148,7 @@ export const SPRITES = [
     ability: "Genera una Shield Bubble Jr. al usar un objeto de curación en ti.",
     location: "Por confirmar",
     source: "Epic / fortnite.gg",
-    variants: [...BASIC, "gem", U("holofoil"), U("cube"), U("quack")]
+    variants: [...BASIC, U("holofoil"), U("cube"), U("quack")]
   },
 
   {
@@ -160,7 +159,7 @@ export const SPRITES = [
     ability: "Por confirmar.",
     location: "Por confirmar",
     source: "fortnite.gg",
-    variants: [...BASIC, U("gem"), U("holofoil"), U("cube"), U("quack")]
+    variants: [...BASIC, U("holofoil"), U("cube"), U("quack")]
   },
 
   {
@@ -171,7 +170,7 @@ export const SPRITES = [
     ability: "Por confirmar.",
     location: "Por confirmar",
     source: "fortnite.gg",
-    variants: [...BASIC, "holofoil", U("gem"), U("cube"), U("quack")]
+    variants: [...BASIC, "holofoil", U("cube"), U("quack")]
   },
 
   {
@@ -182,7 +181,7 @@ export const SPRITES = [
     ability: "Por confirmar.",
     location: "Por confirmar",
     source: "fortnite.gg",
-    variants: [...BASIC, "gem", U("holofoil"), U("cube"), U("quack")]
+    variants: [...BASIC, U("holofoil"), U("cube"), U("quack")]
   },
 
   {
@@ -193,7 +192,7 @@ export const SPRITES = [
     ability: "Por confirmar.",
     location: "Por confirmar",
     source: "fortnite.gg",
-    variants: [...BASIC, U("gem"), U("holofoil"), U("cube"), U("quack")]
+    variants: [...BASIC, U("holofoil"), U("cube"), U("quack")]
   },
 
   {
@@ -204,7 +203,7 @@ export const SPRITES = [
     ability: "Por confirmar.",
     location: "Por confirmar",
     source: "fortnite.gg",
-    variants: [...BASIC, U("gem"), U("holofoil"), U("cube"), U("quack")]
+    variants: [...BASIC, U("holofoil"), U("cube"), U("quack")]
   },
 
   {
@@ -215,7 +214,7 @@ export const SPRITES = [
     ability: "Por confirmar.",
     location: "Por confirmar",
     source: "fortnite.gg",
-    variants: [...BASIC, "holofoil", U("gem"), U("cube"), U("quack")]
+    variants: [...BASIC, "holofoil", U("cube"), U("quack")]
   },
 
   {
@@ -226,7 +225,7 @@ export const SPRITES = [
     ability: "Por confirmar.",
     location: "Por confirmar",
     source: "fortnite.gg",
-    variants: [...BASIC, "holofoil", U("gem"), U("cube"), U("quack")]
+    variants: [...BASIC, "holofoil", U("cube"), U("quack")]
   },
 
   {
@@ -237,7 +236,7 @@ export const SPRITES = [
     ability: "Por confirmar.",
     location: "Por confirmar",
     source: "fortnite.gg",
-    variants: [...BASIC, "holofoil", U("gem"), U("cube"), U("quack")]
+    variants: [...BASIC, "holofoil", U("cube"), U("quack")]
   },
 
   {

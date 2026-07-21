@@ -17,7 +17,8 @@ export function saveCollection(state) {
   localStorage.setItem(STORAGE_KEYS.mastered, JSON.stringify(state.mastered));
 
   localStorage.setItem(STORAGE_KEYS.preferences, JSON.stringify({
-    showUnreleased: state.showUnreleased
+    showUnreleased: state.showUnreleased,
+    obtainedView: state.obtainedView
   }));
 }
 

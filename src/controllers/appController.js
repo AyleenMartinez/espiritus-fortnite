@@ -10,7 +10,8 @@ import {
   toggleShowUnreleased,
   toggleCollected,
   toggleMastered,
-  resetState
+  resetState,
+  setObtainedView
 } from "../state/collectionState.js";
 
 import { renderStats } from "../views/statsView.js";
@@ -80,6 +81,11 @@ function render() {
 
     onToggleMastered(key) {
       toggleMastered(key);
+      render();
+    },
+
+    onSetObtainedView(view) {
+      setObtainedView(view);
       render();
     }
   });
