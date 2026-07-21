@@ -1027,6 +1027,82 @@ select {
   }
 }
 
+/* ============ BOTONES RÁPIDOS POR SPRITE ============ */
+
+.bloque-controles-rapidos {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.acciones-bloque-sprite {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.boton-bloque-todos {
+  border: none;
+  border-radius: 9px;
+  padding: 7px 10px;
+  font-size: 0.72rem;
+  line-height: 1;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.boton-bloque-todos:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+.boton-bloque-conseguido {
+  background: var(--verde);
+  color: white;
+}
+
+.boton-bloque-dominado {
+  background: linear-gradient(135deg, #facc15, #f59e0b);
+  color: #1f1600;
+}
+
+@media (max-width: 649px) {
+  .bloque-titulo-linea {
+    align-items: flex-start;
+  }
+
+  .bloque-controles-rapidos {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .acciones-bloque-sprite {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .boton-bloque-todos {
+    width: 100%;
+    padding: 9px 8px;
+  }
+}
+
+.boton-bloque-conseguido.activo {
+  background: rgba(16, 185, 129, 0.25);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.5);
+}
+
+.boton-bloque-dominado.activo {
+  background: rgba(245, 158, 11, 0.20);
+  color: #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.55);
+}
+
 /* RESPONSIVE */
 
 @media (max-width: 1200px) {

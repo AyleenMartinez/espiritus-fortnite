@@ -1,5 +1,84 @@
 import { STATUS } from "./variants.js";
 
+/*
+  ============================================================
+  DATA DE SPRITES
+  ============================================================
+
+  Este archivo es tu panel principal para agregar o modificar monitos.
+
+  Cada sprite tiene:
+
+  id:
+  - Nombre interno.
+  - Debe ser corto, sin espacios, sin tildes.
+  - También se usa para buscar imágenes.
+  - Ejemplo:
+      "agua"
+      "punto-cero"
+      "batman"
+
+  nameES:
+  - Nombre visible en español.
+
+  nameEN:
+  - Nombre visible en inglés.
+
+  rarity:
+  - Rareza base.
+  - Ejemplo:
+      "Raro"
+      "Épico"
+      "Legendario"
+      "Mítico"
+
+  ability:
+  - Texto de habilidad.
+
+  location:
+  - Lugar donde aparece o referencia de obtención.
+
+  source:
+  - Fuente del dato.
+  - Puede quedar guardado aunque no se muestre en pantalla.
+
+  variants:
+  - Lista de variantes que tiene ese sprite.
+
+  ============================================================
+  VARIANTES
+  ============================================================
+
+  "base"
+  - Variante activa.
+
+  U("gem")
+  - Variante existe, pero está unreleased.
+  - No aparece normalmente.
+  - Solo aparece con "Ver unreleased".
+
+  No poner una variante
+  - Significa que ese sprite no tiene esa variante.
+
+  ============================================================
+  EJEMPLO
+  ============================================================
+
+  variants: [...BASIC, "holofoil", U("gem"), U("cube")]
+
+  Significa:
+  - base activa
+  - gold activa
+  - gummy activa
+  - galaxy activa
+  - holofoil activa
+  - gem unreleased
+  - cube unreleased
+
+  Cuando liberen gem:
+    U("gem") → "gem"
+*/
+
 const U = id => ({
   id,
   status: STATUS.UNRELEASED
@@ -15,7 +94,6 @@ export const SPRITES = [
     rarity: "Raro",
     ability: "Rellena escudo mientras estás en el agua para ti y tu escuadrón cercano.",
     location: "Agua / zonas costeras",
-    source: "Epic / fortnite.gg",
     variants: [...BASIC, U("gem"),"holofoil", U("cube"), U("quack")]
   },
 

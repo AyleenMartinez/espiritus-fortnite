@@ -1,6 +1,97 @@
 import { STATUS, VARIANT_FILTERS } from "../data/variants.js";
 import { normalizeClass } from "../utils/textUtils.js";
 
+/*
+  ============================================================
+  SPRITES VIEW
+  ============================================================
+
+  Este archivo se encarga de pintar la parte visual de los sprites.
+
+  Aquí NO se guardan datos.
+  Aquí NO se decide el progreso real.
+  Aquí solo se dibuja HTML y se conectan botones.
+
+  ============================================================
+  FUNCIONES IMPORTANTES
+  ============================================================
+
+  renderSprites(catalog, state, handlers)
+  - Función principal de este archivo.
+  - Decide si mostrar:
+      cards normales por sprite
+      lista compacta de conseguidos
+      cuadrícula de conseguidos
+
+  createSpriteBlock(sprite, variants, handlers)
+  - Crea el bloque grande de un sprite.
+  - Ejemplo:
+      Agua
+      habilidad
+      rareza
+      ubicación
+      botones ✓ Todo / 👑 Todo
+      cards de variantes
+
+  createVariantCard(variant, handlers)
+  - Crea una card grande.
+  - Ejemplo:
+      imagen
+      nombre
+      rareza
+      bonus
+      botón Lo tengo
+      botón Dominado
+
+  createCompactRow(variant, handlers)
+  - Crea una fila compacta para la vista "Conseguidos" o "Dominados".
+
+  createCompactGridCard(variant, handlers)
+  - Crea una card chica para la vista de cuadrícula.
+
+  shouldShowVariant(variant, state)
+  - Decide si una variante se muestra o no según:
+      filtro actual
+      búsqueda
+      si está conseguida
+      si está dominada
+      si está unreleased
+
+  ============================================================
+  PALABRAS IMPORTANTES
+  ============================================================
+
+  catalog:
+  - Catálogo completo de sprites.
+
+  state:
+  - Estado actual de la app.
+
+  handlers:
+  - Acciones que vienen desde appController.js.
+  - Ejemplo:
+      handlers.onToggleCollected(...)
+      handlers.onToggleMastered(...)
+
+  variant.key:
+  - Clave única de una card.
+  - Ejemplo:
+      "agua-gold"
+
+  variant.status:
+  - Estado de la variante.
+      "active"     = disponible
+      "unreleased" = no liberada
+
+  ============================================================
+  REGLA
+  ============================================================
+
+  Este archivo pinta.
+  No guarda.
+  No modifica directamente localStorage.
+*/
+
 export function renderSprites(catalog, state, handlers) {
   const container = document.getElementById("contenedor-tarjetas");
 
@@ -196,8 +287,24 @@ function createSpriteBlock(sprite, variants, handlers) {
   block.className = "bloque-sprite";
   block.id = `sprite-${sprite.id}`;
 
-  const activeCount = sprite.variants.filter(v => v.status === STATUS.ACTIVE).length;
-  const unreleasedCount = sprite.variants.filter(v => v.status === STATUS.UNRELEASED).length;
+  const variantesActivas = sprite.variants.filter(variante => {
+    return variante.status === STATUS.ACTIVE;
+  });
+
+  const variantesUnreleased = sprite.variants.filter(variante => {
+    return variante.status === STATUS.UNRELEASED;
+  });
+
+  const cantidadDisponibles = variantesActivas.length;
+  const cantidadUnreleased = variantesUnreleased.length;
+
+  const estanTodasConseguidas = variantesActivas.length > 0 && variantesActivas.every(variante => {
+    return handlers.isCollected(variante.key);
+  });
+
+  const estanTodasDominadas = variantesActivas.length > 0 && variantesActivas.every(variante => {
+    return handlers.isMastered(variante.key);
+  });
 
   block.innerHTML = `
     <header class="bloque-header">
@@ -207,9 +314,21 @@ function createSpriteBlock(sprite, variants, handlers) {
           <p class="nombre-ingles">${sprite.nameEN || ""}</p>
         </div>
 
-        <div class="resumen-bloque">
-          <span>${activeCount} disponibles</span>
-          ${unreleasedCount > 0 ? `<span>${unreleasedCount} unreleased</span>` : ""}
+        <div class="bloque-controles-rapidos">
+          <div class="resumen-bloque">
+            <span>${cantidadDisponibles} disponibles</span>
+            ${cantidadUnreleased > 0 ? `<span>${cantidadUnreleased} unreleased</span>` : ""}
+          </div>
+
+          <div class="acciones-bloque-sprite">
+            <button class="boton-bloque-todos boton-bloque-conseguido ${estanTodasConseguidas ? "activo" : ""}" type="button">
+              ${estanTodasConseguidas ? "✕ Quitar" : "✓ Todo"}
+            </button>
+
+            <button class="boton-bloque-todos boton-bloque-dominado ${estanTodasDominadas ? "activo" : ""}" type="button">
+              ${estanTodasDominadas ? "✕ Quitar 👑" : "👑 Todo"}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -218,7 +337,6 @@ function createSpriteBlock(sprite, variants, handlers) {
       <div class="meta-sprite">
         <span>🏷️ ${sprite.rarity || "Por confirmar"}</span>
         <span>📍 ${sprite.location || "Por confirmar"}</span>
-        <span>🔎 ${sprite.source || "Referencia"}</span>
       </div>
     </header>
 
@@ -226,6 +344,17 @@ function createSpriteBlock(sprite, variants, handlers) {
   `;
 
   const grid = block.querySelector(".contenedor-variantes");
+
+  const botonTodoConseguido = block.querySelector(".boton-bloque-conseguido");
+  const botonTodoDominado = block.querySelector(".boton-bloque-dominado");
+
+  botonTodoConseguido?.addEventListener("click", () => {
+    handlers.onAlternarSpriteConseguido(sprite.id);
+  });
+
+  botonTodoDominado?.addEventListener("click", () => {
+    handlers.onAlternarSpriteDominado(sprite.id);
+  });
 
   variants.forEach(variant => {
     grid.appendChild(createVariantCard(variant, handlers));

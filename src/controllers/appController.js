@@ -11,7 +11,9 @@ import {
   toggleCollected,
   toggleMastered,
   resetState,
-  setObtainedView
+  setObtainedView,
+  alternarVariantesConseguidas,
+  alternarVariantesDominadas
 } from "../state/collectionState.js";
 
 import { renderStats } from "../views/statsView.js";
@@ -24,6 +26,75 @@ import {
 } from "../views/controlsView.js";
 
 import { renderSprites } from "../views/spritesView.js";
+
+/*
+  ============================================================
+  APP CONTROLLER
+  ============================================================
+
+  Este archivo es el cerebro de la app.
+
+  Hace 4 cosas principales:
+
+  1) Inicia la app:
+     initApp()
+
+  2) Vuelve a pintar la pantalla:
+     render()
+
+  3) Calcula estadísticas:
+     calculateStats()
+
+  4) Conecta acciones de la vista con cambios de estado:
+     - buscar
+     - filtrar
+     - marcar conseguido
+     - marcar dominado
+     - cambiar vista lista/cuadrícula
+     - marcar todo un sprite como conseguido/dominado
+
+  ============================================================
+  PALABRAS IMPORTANTES
+  ============================================================
+
+  catalog / catalogo:
+  - Lista completa de sprites ya preparados para pintar.
+
+  collectionState / estado:
+  - Guarda lo que el usuario hizo:
+      conseguidos
+      dominados
+      filtro actual
+      búsqueda
+      vista actual
+
+  render():
+  - Vuelve a dibujar la app completa.
+  - Se llama cada vez que algo cambia.
+
+  handlers / acciones:
+  - Son funciones que se le pasan a la vista.
+  - La vista no cambia datos directamente.
+  - La vista avisa al controller:
+      "apretaron este botón"
+  - El controller cambia el estado y vuelve a renderizar.
+
+  ============================================================
+  FLUJO SIMPLE
+  ============================================================
+
+  Usuario hace clic
+    ↓
+  spritesView.js avisa
+    ↓
+  appController.js recibe la acción
+    ↓
+  collectionState.js cambia el estado
+    ↓
+  localStorage guarda
+    ↓
+  render() repinta todo
+*/
 
 let catalog = [];
 
@@ -71,24 +142,54 @@ function render() {
   renderToggleUnreleased(collectionState.showUnreleased);
 
   renderSprites(catalog, collectionState, {
-    isCollected: key => Boolean(collectionState.collected[key]),
-    isMastered: key => Boolean(collectionState.mastered[key]),
+    isCollected: claveVariante => Boolean(collectionState.collected[claveVariante]),
+    isMastered: claveVariante => Boolean(collectionState.mastered[claveVariante]),
 
-    onToggleCollected(key) {
-      toggleCollected(key);
+    onToggleCollected(claveVariante) {
+      toggleCollected(claveVariante);
       render();
     },
 
-    onToggleMastered(key) {
-      toggleMastered(key);
+    onToggleMastered(claveVariante) {
+      toggleMastered(claveVariante);
       render();
     },
 
-    onSetObtainedView(view) {
-      setObtainedView(view);
+    onSetObtainedView(vista) {
+      setObtainedView(vista);
+      render();
+    },
+
+    onAlternarSpriteConseguido(idDelSprite) {
+      const clavesDeVariantes = obtenerClavesDeVariantesActivasDelSprite(idDelSprite);
+
+      alternarVariantesConseguidas(clavesDeVariantes);
+      render();
+    },
+
+    onAlternarSpriteDominado(idDelSprite) {
+      const clavesDeVariantes = obtenerClavesDeVariantesActivasDelSprite(idDelSprite);
+
+      alternarVariantesDominadas(clavesDeVariantes);
       render();
     }
   });
+}
+
+function obtenerClavesDeVariantesActivasDelSprite(idDelSprite) {
+  const spriteEncontrado = catalog.find(sprite => {
+    return sprite.id === idDelSprite;
+  });
+
+  if (!spriteEncontrado) return [];
+
+  return spriteEncontrado.variants
+    .filter(variante => {
+      return variante.status === STATUS.ACTIVE;
+    })
+    .map(variante => {
+      return variante.key;
+    });
 }
 
 function calculateStats() {

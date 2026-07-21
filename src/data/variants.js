@@ -1,3 +1,61 @@
+/*
+  ============================================================
+  DATA DE VARIANTES
+  ============================================================
+
+  Este archivo define los tipos de variantes que existen en la app.
+
+  STATUS:
+  - Define si una variante está disponible o no.
+
+  STATUS.ACTIVE:
+  - Variante disponible.
+  - Se muestra normalmente.
+  - Cuenta en el progreso.
+  - Se puede marcar como conseguida/dominada.
+
+  STATUS.UNRELEASED:
+  - Variante no liberada.
+  - No aparece normalmente.
+  - No cuenta en el progreso.
+  - No se puede marcar como conseguida/dominada.
+  - Solo aparece si activas "Ver unreleased".
+
+  VARIANTS:
+  - Define cada tipo de variante.
+  - Ejemplo:
+      base
+      gold
+      gummy
+      galaxy
+      gem
+      holofoil
+
+  Cada variante tiene:
+
+  id:
+  - Nombre interno.
+  - Ejemplo:
+      "gold"
+
+  name:
+  - Nombre visible.
+  - Ejemplo:
+      "Gold"
+
+  bonus:
+  - Texto descriptivo.
+
+  icon:
+  - Ícono usado como placeholder si falta imagen.
+
+  VARIANT_ORDER:
+  - Orden en que aparecen las variantes dentro de cada sprite.
+
+  VARIANT_FILTERS:
+  - Variantes que aparecen como filtros.
+*/
+
 export const STATUS = {
   ACTIVE: "active",
   UNRELEASED: "unreleased"
